@@ -9,7 +9,7 @@ class RatePlanForm(forms.ModelForm):
         model = RatePlan
         fields = [
             'rate_name', 'room_type', 'season_type', 'valid_from', 'valid_to',
-            'base_rate', 'additional_guest_charges', 'meal_plan', 'meal_plan_cost',
+            'base_rate', 'base_rate_for_24', 'additional_guest_charges', 'meal_plan', 'meal_plan_cost',
             'cancellation_policy', 'description', 'weekend_surcharge', 
             'is_percentage_surcharge', 'is_active', 'minimum_stay', 'maximum_stay',
             'advance_booking_days'
@@ -37,6 +37,12 @@ class RatePlanForm(forms.ModelForm):
                 'min': (date.today() + timedelta(days=1)).isoformat()
             }),
             'base_rate': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'min': '0.01',
+                'placeholder': '0.00'
+            }),
+            'base_rate_for_24': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'step': '0.01',
                 'min': '0.01',
@@ -103,6 +109,7 @@ class RatePlanForm(forms.ModelForm):
             'valid_from': 'Valid From Date',
             'valid_to': 'Valid To Date',
             'base_rate': 'Base Rate per Night (₹)',
+            'base_rate_for_24': 'Base Rate 24 Hrs (₹)',
             'additional_guest_charges': 'Additional Guest Charges (₹)',
             'meal_plan': 'Meal Plan',
             'meal_plan_cost': 'Meal Plan Cost per Person per Day (₹)',

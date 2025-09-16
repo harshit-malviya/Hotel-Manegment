@@ -60,6 +60,12 @@ class RatePlan(models.Model):
         validators=[MinValueValidator(Decimal('0.01'))],
         help_text="Base rate per night for the room type"
     )
+    base_rate_for_24 = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))],
+        help_text="Base rate for 24 Hrs"
+    )
     
     additional_guest_charges = models.DecimalField(
         max_digits=8,
