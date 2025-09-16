@@ -158,22 +158,22 @@ class RatePlanForm(forms.ModelForm):
         
         # Check for overlapping rate plans
         # if valid_from and valid_to and room_type and rate_name:
-            overlapping_rates = RatePlan.objects.filter(
-                room_type=room_type,
-                valid_from__lt=valid_to,
-                valid_to__gt=valid_from
-            )
-            
-            # Exclude current instance if editing
-            if self.instance.pk:
-                overlapping_rates = overlapping_rates.exclude(pk=self.instance.pk)
-            
-            if overlapping_rates.exists():
-                overlapping_rate = overlapping_rates.first()
-                raise ValidationError(
-                    f'Date range overlaps with existing rate plan: "{overlapping_rate.rate_name}" '
-                    f'({overlapping_rate.validity_period})'
-                )
+        #   overlapping_rates = RatePlan.objects.filter(
+        #       room_type=room_type,
+        #       valid_from__lt=valid_to,
+        #       valid_to__gt=valid_from
+        #   )
+        #   
+        #   # Exclude current instance if editing
+        #   if self.instance.pk:
+        #       overlapping_rates = overlapping_rates.exclude(pk=self.instance.pk)
+        #   
+        #   if overlapping_rates.exists():
+        #       overlapping_rate = overlapping_rates.first()
+        #       raise ValidationError(
+        #           f'Date range overlaps with existing rate plan: "{overlapping_rate.rate_name}" '
+        #           f'({overlapping_rate.validity_period})'
+        #       )
         
         return cleaned_data
 
