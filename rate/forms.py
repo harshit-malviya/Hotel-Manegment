@@ -108,7 +108,7 @@ class RatePlanForm(forms.ModelForm):
             'season_type': 'Season Type',
             'valid_from': 'Valid From Date',
             'valid_to': 'Valid To Date',
-            'base_rate': 'Base Rate per Night (₹)',
+            'base_rate': 'Base Rate 12 Hrs (₹)',
             'base_rate_for_24': 'Base Rate 24 Hrs (₹)',
             'additional_guest_charges': 'Additional Guest Charges (₹)',
             'meal_plan': 'Meal Plan',
