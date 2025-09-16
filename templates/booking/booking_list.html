@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/booking.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1 class="page-title">Booking Management</h1>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'room-availability-search' %}" class="btn btn-info">
+                🔍 Search Rooms
+            </a>
+            <a href="{% url 'booking-create' %}" class="btn btn-primary">
+                ➕ New Booking
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="search-form">
+        <form method="GET" class="search-grid">
+            <div>
+                <label class="form-label">Search</label>
+                <input type="text" name="search" value="{{ search_query }}" 
+                       placeholder="Search by guest name, email, room number, or booking ID..."
+                       class="search-input">
+            </div>
+            <div>
+                <label class="form-label">Status</label>
+                <select name="status" class="search-select">
+                    <option value="">All Statuses</option>
+                    {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    🔍 Filter
+                </button>
+                {% if search_query or status_filter %}
+                <a href="{% url 'booking-list' %}" class="btn btn-secondary">
+                    Clear
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Summary -->
+    <div style="margin-bottom: 20px; color: #666;">
+        {% if search_query or status_filter %}
+            Found {{ total_bookings }} booking{{ total_bookings|pluralize }} 
+            {% if search_query %}matching "{{ search_query }}"{% endif %}
+            {% if status_filter %}with status "{{ status_filter }}"{% endif %}
+        {% else %}
+            Total {{ total_bookings }} booking{{ total_bookings|pluralize }}
+        {% endif %}
+    </div>
+
+    <!-- Bookings Table -->
+    <div class="card">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Guest</th>
+                    <th>Room</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>Guests</th>
+                    <th>Source</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                    <th style="text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in page_obj %}
+                <tr>
+                    <td><strong>#{{ booking.id }}</strong></td>
+                    <td>{{ booking.guest.full_name }}</td>
+                    <td>
+                        Room {{ booking.room.room_number }}
+                        <br><small style="color: #666;">{{ booking.room.room_type.name }}</small>
+                    </td>
+                    <td>{{ booking.check_in_date|date:"M d, Y" }}</td>
+                    <td>{{ booking.check_out_date|date:"M d, Y" }}</td>
+                    <td>
+                        {{ booking.number_of_adults }}A
+                        {% if booking.number_of_children %}, {{ booking.number_of_children }}C{% endif %}
+                    </td>
+                    <td>
+                        <span style="font-size: 12px; color: #666;">{{ booking.get_booking_source_display }}</span>
+                        {% if booking.reservation_source %}
+                            <br><small style="color: #007bff;">{{ booking.reservation_source.name }}</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="status-badge {% if booking.status == 'CONFIRMED' %}status-confirmed{% elif booking.status == 'CHECKED_IN' %}status-checked-in{% elif booking.status == 'CHECKED_OUT' %}status-checked-out{% elif booking.status == 'CANCELED' %}status-canceled{% else %}status-pending{% endif %}">
+                            {{ booking.get_status_display }}
+                        </span>
+                    </td>
+                    <td><strong>₹{{ booking.total_amount }}</strong></td>
+                    <td style="text-align: center;">
+                        <a href="{% url 'booking-detail' booking.id %}" class="btn btn-success btn-sm">
+                            👁️ View
+                        </a>
+                        <a href="{% url 'booking-update' booking.id %}" class="btn btn-warning btn-sm">
+                            ✏️ Edit
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10" class="empty-state">
+                        {% if search_query or status_filter %}
+                            No bookings found matching your criteria.
+                        {% else %}
+                            No bookings found. <a href="{% url 'booking-create' %}">Create the first booking</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        <div class="pagination-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+                   class="pagination-link">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+                   class="pagination-link">Previous</a>
+            {% endif %}
+            
+            <span class="pagination-current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+                   class="pagination-link">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
+                   class="pagination-link">Last</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

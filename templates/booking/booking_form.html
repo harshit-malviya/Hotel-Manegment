@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/booking.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="booking-page">
+    <div class="page-header">
+        <h1 class="page-title">{{ title }}</h1>
+        <a href="{% url 'booking-list' %}" class="btn btn-secondary">
+            ← Back to Bookings
+        </a>
+    </div>
+
+    <div class="form-card">
+        <form method="post" id="bookingForm">
+            {% csrf_token %}
+            
+            <!-- Guest and Room Selection -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    👤 Guest & Room Selection
+                </h3>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.guest.label }}</label>
+                        {{ form.guest }}
+                        {% if form.guest.errors %}
+                            <div class="form-error">{{ form.guest.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.rate_plan.label }}</label>
+                        {{ form.rate_plan }}
+                        {% if form.rate_plan.errors %}
+                            <div class="form-error">{{ form.rate_plan.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.room_type.label }}</label>
+                        {{ form.room_type }}
+                        {% if form.room_type.help_text %}
+                            <small class="form-help">{{ form.room_type.help_text }}</small>
+                        {% endif %}
+                        {% if form.room_type.errors %}
+                            <div class="form-error">{{ form.room_type.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.room.label }}</label>
+                        {{ form.room }}
+                        <div id="room-loading" class="loading-indicator" style="display: none;">
+                            Loading available rooms...
+                        </div>
+                        {% if form.room.errors %}
+                            <div class="form-error">{{ form.room.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stay Details -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    📅 Stay Details
+                </h3>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.check_in_date.label }}</label>
+                        {{ form.check_in_date }}
+                        {% if form.check_in_date.errors %}
+                            <div class="form-error">{{ form.check_in_date.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.check_out_date.label }}</label>
+                        {{ form.check_out_date }}
+                        {% if form.check_out_date.errors %}
+                            <div class="form-error">{{ form.check_out_date.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-grid-4">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.number_of_adults.label }}</label>
+                        {{ form.number_of_adults }}
+                        {% if form.number_of_adults.errors %}
+                            <div class="form-error">{{ form.number_of_adults.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.number_of_children.label }}</label>
+                        {{ form.number_of_children }}
+                        {% if form.number_of_children.errors %}
+                            <div class="form-error">{{ form.number_of_children.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.booking_source.label }}</label>
+                        {{ form.booking_source }}
+                        {% if form.booking_source.errors %}
+                            <div class="form-error">{{ form.booking_source.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group reservation-source-container">
+                        <label class="form-label">{{ form.reservation_source.label }}</label>
+                        {{ form.reservation_source }}
+                        <div id="reservationSourceDropdown"></div>
+                        <input type="hidden" id="id_reservation_source_id" name="reservation_source_id" value="{% if form.instance.reservation_source %}{{ form.instance.reservation_source.id }}{% endif %}">
+                        {% if form.reservation_source.help_text %}
+                            <small class="form-help">Type to search and select from available reservation sources</small>
+                        {% endif %}
+                        {% if form.reservation_source.errors %}
+                            <div class="form-error">{{ form.reservation_source.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.status.label }}</label>
+                        {{ form.status }}
+                        {% if form.status.errors %}
+                            <div class="form-error">{{ form.status.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Details -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    💰 Payment Details
+                </h3>
+                <div class="form-grid-4">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.total_amount.label }}</label>
+                        <div class="amount-input-group">
+                            {{ form.total_amount }}
+                            <button type="button" id="calculate-amount-btn" class="btn-calculate" title="Calculate total amount">
+                                🧮 Calculate
+                            </button>
+                        </div>
+                        {% if form.total_amount.errors %}
+                            <div class="form-error">{{ form.total_amount.errors }}</div>
+                        {% endif %}
+                        <small class="form-help">{{ form.total_amount.help_text }}</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.advance_payment.label }}</label>
+                        {{ form.advance_payment }}
+                        {% if form.advance_payment.errors %}
+                            <div class="form-error">{{ form.advance_payment.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.payment_status.label }}</label>
+                        {{ form.payment_status }}
+                        {% if form.payment_status.errors %}
+                            <div class="form-error">{{ form.payment_status.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.payment_method.label }}</label>
+                        {{ form.payment_method }}
+                        {% if form.payment_method.errors %}
+                            <div class="form-error">{{ form.payment_method.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    📝 Additional Information
+                </h3>
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.special_requests.label }}</label>
+                        {{ form.special_requests }}
+                        {% if form.special_requests.errors %}
+                            <div class="form-error">{{ form.special_requests.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">{{ form.booking_notes.label }}</label>
+                        {{ form.booking_notes }}
+                        {% if form.booking_notes.errors %}
+                            <div class="form-error">{{ form.booking_notes.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group" style="max-width: 400px;">
+                    <label class="form-label">{{ form.confirmation_number.label }}</label>
+                    {{ form.confirmation_number }}
+                    {% if form.confirmation_number.errors %}
+                        <div class="form-error">{{ form.confirmation_number.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Form Errors -->
+            {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <!-- Submit Button -->
+            <div class="form-submit">
+                <button type="submit" class="btn-submit">
+                    {{ submit_text }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/booking.js' %}"></script>
+{% endblock %}

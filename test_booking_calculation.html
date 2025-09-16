@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Booking Calculation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { padding: 8px; width: 200px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px; }
+        .error { background: #f8d7da; color: #721c24; }
+        .success { background: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+    <h1>Test Booking Amount Calculation</h1>
+    
+    <form id="testForm">
+        <div class="form-group">
+            <label>Check-in Date:</label>
+            <input type="date" id="check_in_date" name="check_in_date" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Check-out Date:</label>
+            <input type="date" id="check_out_date" name="check_out_date" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Room ID:</label>
+            <input type="number" id="room" name="room" placeholder="Enter room ID" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Number of Adults:</label>
+            <input type="number" id="number_of_adults" name="number_of_adults" value="1" min="1">
+        </div>
+        
+        <div class="form-group">
+            <label>Number of Children:</label>
+            <input type="number" id="number_of_children" name="number_of_children" value="0" min="0">
+        </div>
+        
+        <button type="button" onclick="calculateAmount()">Calculate Amount</button>
+    </form>
+    
+    <div id="result" class="result" style="display: none;"></div>
+    
+    <script>
+        // Set default dates
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        document.getElementById('check_in_date').value = today.toISOString().split('T')[0];
+        document.getElementById('check_out_date').value = tomorrow.toISOString().split('T')[0];
+        
+        async function calculateAmount() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.innerHTML = 'Calculating...';
+            
+            try {
+                const formData = new FormData();
+                formData.append('check_in_date', document.getElementById('check_in_date').value);
+                formData.append('check_out_date', document.getElementById('check_out_date').value);
+                formData.append('room', document.getElementById('room').value);
+                formData.append('number_of_adults', document.getElementById('number_of_adults').value);
+                formData.append('number_of_children', document.getElementById('number_of_children').value);
+                formData.append('csrfmiddlewaretoken', 'test'); // This would normally come from Django
+                
+                const response = await fetch('/bookings/calculate-amount/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.total_amount) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>Calculation Successful!</h3>
+                        <p><strong>Total Amount:</strong> ₹${data.total_amount}</p>
+                        <p><strong>Rate per Night:</strong> ₹${data.rate_per_night}</p>
+                        <p><strong>Number of Nights:</strong> ${data.nights}</p>
+                        <p><strong>Total Guests:</strong> ${data.total_guests}</p>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `<h3>Error:</h3><p>${data.error || 'Unknown error occurred'}</p>`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<h3>Network Error:</h3><p>${error.message}</p>`;
+            }
+        }
+        
+        // Test available rooms
+        async function testRoomAvailability() {
+            try {
+                const response = await fetch('/bookings/api/rooms-by-type/?room_type_id=1');
+                const data = await response.json();
+                console.log('Available rooms:', data);
+                
+                if (data.rooms && data.rooms.length > 0) {
+                    document.getElementById('room').value = data.rooms[0].id;
+                    console.log('Set room ID to:', data.rooms[0].id);
+                }
+            } catch (error) {
+                console.error('Error fetching rooms:', error);
+            }
+        }
+        
+        // Auto-populate room ID on page load
+        window.addEventListener('load', testRoomAvailability);
+    </script>
+</body>
+</html>

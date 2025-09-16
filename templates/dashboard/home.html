@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-content">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1>🏠 Dashboard Overview</h1>
+        <p>Welcome back! Here's what's happening at your hotel today - {{ today|date:"F d, Y" }}</p>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <!-- Occupancy Rate -->
+        <div class="kpi-card">
+            <div class="kpi-header">
+                <div class="kpi-icon occupancy">📊</div>
+                <div>
+                    <div class="kpi-title">Occupancy Rate</div>
+                </div>
+            </div>
+            <div class="occupancy-meter" style="--percentage: {{ occupancy_rate }}">
+                <div class="meter-circle">
+                    <div class="meter-inner">
+                        <div class="meter-percentage">{{ occupancy_rate }}%</div>
+                        <div class="meter-label">Occupied</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Rooms -->
+        <div class="kpi-card">
+            <div class="kpi-header">
+                <div class="kpi-icon rooms">🏨</div>
+                <div>
+                    <div class="kpi-title">Room Status</div>
+                </div>
+            </div>
+            <div class="kpi-value">{{ total_rooms }}</div>
+            <div class="kpi-subtitle">Total Rooms</div>
+            <div class="room-status-grid">
+                <div class="status-item available">
+                    <div class="status-number">{{ available_rooms }}</div>
+                    <div class="status-label">Available</div>
+                </div>
+                <div class="status-item occupied">
+                    <div class="status-number">{{ occupied_rooms }}</div>
+                    <div class="status-label">Occupied</div>
+                </div>
+                <div class="status-item maintenance">
+                    <div class="status-number">{{ maintenance_rooms }}</div>
+                    <div class="status-label">Maintenance</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue -->
+        <div class="kpi-card">
+            <div class="kpi-header">
+                <div class="kpi-icon revenue">💰</div>
+                <div>
+                    <div class="kpi-title">Revenue ({{ current_month }})</div>
+                </div>
+            </div>
+            <div class="kpi-value">₹{{ this_month_revenue|floatformat:0 }}</div>
+            <div class="kpi-subtitle">
+                vs Last Month: ₹{{ last_month_revenue|floatformat:0 }}
+                {% if revenue_growth > 0 %}
+                <span class="growth-indicator growth-positive">↗ {{ revenue_growth }}%</span>
+                {% elif revenue_growth < 0 %} <span class="growth-indicator growth-negative">↘ {{ revenue_growth}}%</span>
+                    {% endif %}
+            </div>
+        </div>
+
+        <!-- Bookings -->
+        <div class="kpi-card">
+            <div class="kpi-header">
+                <div class="kpi-icon bookings">📋</div>
+                <div>
+                    <div class="kpi-title">Bookings</div>
+                </div>
+            </div>
+            <div class="kpi-value">{{ active_bookings }}</div>
+            <div class="kpi-subtitle">Active Bookings</div>
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <div class="stat-value">{{ pending_bookings }}</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ total_bookings }}</div>
+                    <div class="stat-label">Total</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Activity -->
+        <div class="kpi-card">
+            <div class="kpi-header">
+                <div class="kpi-icon checkins">🕐</div>
+                <div>
+                    <div class="kpi-title">Today's Activity</div>
+                </div>
+            </div>
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <div class="stat-value">{{ todays_checkins }}</div>
+                    <div class="stat-label">Check-ins</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ todays_checkouts }}</div>
+                    <div class="stat-label">Check-outs</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guests -->
+        <div class="kpi-card">
+            <div class="kpi-header">
+                <div class="kpi-icon guests">👥</div>
+                <div>
+                    <div class="kpi-title">Guests</div>
+                </div>
+            </div>
+            <div class="kpi-value">{{ total_guests }}</div>
+            <div class="kpi-subtitle">Total Registered</div>
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <div class="stat-value">{{ new_guests_this_month }}</div>
+                    <div class="stat-label">New This Month</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">₹{{ adr|floatformat:0 }}</div>
+                    <div class="stat-label">Avg Daily Rate</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="content-grid">
+        <!-- Recent Bookings -->
+        <div class="chart-section">
+            <h3 class="section-title">📋 Recent Bookings</h3>
+            <div class="booking-list">
+                {% for booking in recent_bookings %}
+                <div class="booking-item">
+                    <div>
+                        <div class="booking-guest">{{ booking.guest.full_name }}</div>
+                        <div class="booking-room">Room {{ booking.room.room_number }} • {{ booking.duration_nights }}
+                            nights</div>
+                        {% if booking.reservation_source %}
+                        <div style="font-size: 11px; color: #007bff;">via {{ booking.reservation_source.name }}</div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="booking-date">{{ booking.check_in_date|date:"M d" }} - {{booking.check_out_date|date:"M d" }}</div>
+                        <span class="status-badge status-{{ booking.status|lower|cut:' '|cut:'_' }}">{{booking.get_status_display }}</span>
+                    </div>
+                </div>
+                {% empty %}
+                <p style="text-align: center; color: #666; padding: 20px;">No recent bookings</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Upcoming Check-ins -->
+        <div class="info-section">
+            <h3 class="section-title">📅 Upcoming Check-ins</h3>
+            <div class="booking-list">
+                {% for booking in upcoming_checkins %}
+                <div class="booking-item">
+                    <div>
+                        <div class="booking-guest">{{ booking.guest.full_name }}</div>
+                        <div class="booking-room">Room {{ booking.room.room_number }}</div>
+                    </div>
+                    <div class="booking-date">{{ booking.check_in_date|date:"M d, Y" }}</div>
+                </div>
+                {% empty %}
+                <p style="text-align: center; color: #666; padding: 20px;">No upcoming check-ins</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

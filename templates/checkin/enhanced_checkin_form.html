@@ -1,0 +1,1416 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .clean-form {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-title {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .form-section {
+        margin-bottom: 25px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+    }
+
+    .section-title {
+        color: #667eea;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .form-row.single {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+    }
+
+    .add-guest-btn {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        margin-top: 10px;
+        transition: background-color 0.3s ease;
+    }
+
+    .add-guest-btn:hover {
+        background: #218838;
+    }
+
+    .add-guest-btn.cancel {
+        background: #dc3545;
+    }
+
+    .add-guest-btn.cancel:hover {
+        background: #c82333;
+    }
+
+    .guest-form {
+        display: none;
+        background: #e8f5e8;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border: 2px dashed #28a745;
+    }
+
+    .guest-form.show {
+        display: block;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 40px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 20px;
+        transition: transform 0.2s ease;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .form-error {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .form-help {
+        color: #666;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .required {
+        color: #dc3545;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .payment-info {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+        padding: 15px;
+        border-radius: 6px;
+        text-align: center;
+    }
+
+    .file-input-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .file-input-wrapper input[type=file] {
+        position: absolute;
+        left: -9999px;
+    }
+
+    .file-input-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border: 2px dashed #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+    .file-input-label:hover {
+        border-color: #667eea;
+        background: #f0f2ff;
+    }
+
+    .file-input-label.has-file {
+        border-color: #28a745;
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .file-icon {
+        font-size: 20px;
+        color: #667eea;
+    }
+
+    .file-text {
+        flex: 1;
+        font-size: 14px;
+    }
+
+    .file-name {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .image-preview {
+        margin-top: 10px;
+        max-width: 200px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    /* Guest Search Styles */
+    .guest-search-container {
+        position: relative;
+    }
+
+    .guest-search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #ddd;
+        border-top: none;
+        border-radius: 0 0 5px 5px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+    }
+
+    .guest-search-item {
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background-color 0.2s ease;
+    }
+
+    .guest-search-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .guest-search-item:last-child {
+        border-bottom: none;
+    }
+
+    .guest-search-item .guest-name {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .guest-search-item .guest-contact {
+        font-size: 12px;
+        color: #666;
+        margin-top: 2px;
+    }
+
+    /* Guest Tooltip Styles */
+    .guest-tooltip {
+        position: absolute;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        padding: 15px;
+        z-index: 1001;
+        min-width: 300px;
+        max-width: 400px;
+        font-size: 13px;
+        line-height: 1.4;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        pointer-events: none;
+    }
+
+    .guest-tooltip.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .guest-tooltip-header {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+
+    .guest-tooltip-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .guest-tooltip-contact {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .guest-tooltip-section {
+        margin-bottom: 8px;
+    }
+
+    .guest-tooltip-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .guest-tooltip-label {
+        font-weight: 500;
+        color: #555;
+        display: inline-block;
+        min-width: 80px;
+    }
+
+    .guest-tooltip-value {
+        color: #333;
+    }
+
+    .guest-tooltip-badge {
+        display: inline-block;
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+        margin-left: 5px;
+    }
+
+    .guest-search-item:hover {
+        background-color: #f0f8ff;
+        border-left: 3px solid #667eea;
+        padding-left: 7px;
+    }
+
+    .selected-guest-info {
+        margin-top: 10px;
+    }
+
+    .guest-card {
+        background: #e8f5e8;
+        border: 1px solid #28a745;
+        border-radius: 5px;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .guest-details {
+        font-weight: 500;
+        color: #155724;
+    }
+
+    .clear-guest-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .clear-guest-btn:hover {
+        background: #c82333;
+    }
+
+    .save-guest-btn {
+        background: #17a2b8;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+        width: 100%;
+    }
+
+    .save-guest-btn:hover {
+        background: #138496;
+    }
+
+    .save-guest-btn:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
+
+    .loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    /* Form Toggle Styles */
+    .form-toggle-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+        padding: 5px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
+    .toggle-btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        color: #666;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .toggle-btn:hover {
+        background: #e9ecef;
+        color: #333;
+    }
+
+    .toggle-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Form Container Styles */
+    .form-container {
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .form-container.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="clean-form">
+    <h1 class="form-title">🏨 Guest Check-In & Booking</h1>
+    
+    <!-- Form Toggle Buttons -->
+    <div class="form-toggle-container">
+        <button type="button" class="toggle-btn active" id="checkinToggle">
+            🏨 Check-In
+        </button>
+        <button type="button" class="toggle-btn" id="bookingToggle">
+            📅 Create Booking
+        </button>
+    </div>
+
+    <!-- Check-In Form -->
+    <form method="post" id="checkinForm" enctype="multipart/form-data" class="form-container active">
+        {% csrf_token %}
+
+        <!-- Guest Selection -->
+        <div class="form-section">
+            <h3 class="section-title">👤 Guest</h3>
+
+            <div class="form-group">
+                <label class="form-label">Search Guest</label>
+                <div class="guest-search-container">
+                    {{ checkin_form.guest }}
+                    {{ checkin_form.selected_guest_id }}
+                    <div class="guest-search-results" id="guestSearchResults"></div>
+                    <div class="guest-tooltip" id="guestTooltip">
+                        <div class="guest-tooltip-header">
+                            <div class="guest-tooltip-name" id="tooltipName"></div>
+                            <div class="guest-tooltip-contact" id="tooltipContact"></div>
+                        </div>
+                        <div class="guest-tooltip-section">
+                            <span class="guest-tooltip-label">Address:</span>
+                            <span class="guest-tooltip-value" id="tooltipAddress"></span>
+                        </div>
+                        <div class="guest-tooltip-section">
+                            <span class="guest-tooltip-label">ID Proof:</span>
+                            <span class="guest-tooltip-value" id="tooltipIdProof"></span>
+                        </div>
+                        <div class="guest-tooltip-section">
+                            <span class="guest-tooltip-label">Gender:</span>
+                            <span class="guest-tooltip-value" id="tooltipGender"></span>
+                        </div>
+                        <div class="guest-tooltip-section">
+                            <span class="guest-tooltip-label">DOB:</span>
+                            <span class="guest-tooltip-value" id="tooltipDob"></span>
+                        </div>
+                        <div class="guest-tooltip-section">
+                            <span class="guest-tooltip-label">Bookings:</span>
+                            <span class="guest-tooltip-value" id="tooltipBookings"></span>
+                            <span class="guest-tooltip-badge" id="tooltipBookingBadge"></span>
+                        </div>
+                    </div>
+                    <div class="selected-guest-info" id="selectedGuestInfo" style="display: none;">
+                        <div class="guest-card">
+                            <span class="guest-details"></span>
+                            <button type="button" class="clear-guest-btn" id="clearGuestBtn">✕</button>
+                        </div>
+                    </div>
+                </div>
+                {% if checkin_form.guest.errors %}
+                <div class="form-error">{{ checkin_form.guest.errors }}</div>
+                {% endif %}
+
+                <button type="button" class="add-guest-btn" id="addGuestBtn">
+                    ➕ Add New Guest
+                </button>
+            </div>
+
+            <!-- New Guest Form -->
+            <div class="guest-form" id="guestForm">
+                <h4 style="color: #28a745; margin-bottom: 15px;">✨ New Guest Details</h4>
+
+                <div style="display: none;">{{ checkin_form.create_new_guest }}</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name <span class="required">*</span></label>
+                        {{ checkin_form.guest_first_name }}
+                        {% if checkin_form.guest_first_name.errors %}
+                        <div class="form-error">{{ checkin_form.guest_first_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name <span class="required">*</span></label>
+                        {{ checkin_form.guest_last_name }}
+                        {% if checkin_form.guest_last_name.errors %}
+                        <div class="form-error">{{ checkin_form.guest_last_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Email <span class="required">*</span></label>
+                        {{ checkin_form.guest_email }}
+                        {% if checkin_form.guest_email.errors %}
+                        <div class="form-error">{{ checkin_form.guest_email.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone <span class="required">*</span></label>
+                        {{ checkin_form.guest_phone }}
+                        {% if checkin_form.guest_phone.errors %}
+                        <div class="form-error">{{ checkin_form.guest_phone.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row single">
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        {{ checkin_form.guest_address }}
+                        {% if checkin_form.guest_address.errors %}
+                        <div class="form-error">{{ checkin_form.guest_address.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">ID Proof Type</label>
+                        {{ checkin_form.guest_id_proof_type }}
+                        {% if checkin_form.guest_id_proof_type.errors %}
+                        <div class="form-error">{{ checkin_form.guest_id_proof_type.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ID Proof Number</label>
+                        {{ checkin_form.guest_id_proof_number }}
+                        {% if checkin_form.guest_id_proof_number.errors %}
+                        <div class="form-error">{{ checkin_form.guest_id_proof_number.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-row single">
+                    <div class="form-group">
+                        <label class="form-label">ID Proof Image</label>
+                        {{ checkin_form.guest_id_proof_image }}
+                        {% if checkin_form.guest_id_proof_image.errors %}
+                            <div class="form-error">{{ checkin_form.guest_id_proof_image.errors }}</div>
+                        {% endif %}
+                        <small class="form-help">Upload a clear photo of the ID document (JPG, PNG, max 5MB)</small>
+                    </div>
+                </div>
+                
+                <div class="form-row single">
+                    <div class="form-group">
+                        <button type="button" class="save-guest-btn" id="saveGuestBtn">
+                            💾 Save Guest Data
+                        </button>
+                        <small class="form-help">Save this guest information for future use</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room & Details -->
+        <div class="form-section">
+            <h3 class="section-title">🏠 Room & Details</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Room</label>
+                    {{ checkin_form.room_number }}
+                    {% if checkin_form.room_number.errors %}
+                    <div class="form-error">{{ checkin_form.room_number.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Number of Guests</label>
+                    {{ checkin_form.number_of_guests }}
+                    {% if checkin_form.number_of_guests.errors %}
+                    <div class="form-error">{{ checkin_form.number_of_guests.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Check-In Time</label>
+                    {{ checkin_form.actual_check_in_date_time }}
+                    {% if checkin_form.actual_check_in_date_time.errors %}
+                    <div class="form-error">{{ checkin_form.actual_check_in_date_time.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Expected Check-Out</label>
+                    {{ checkin_form.expected_check_out_date }}
+                    {% if checkin_form.expected_check_out_date.errors %}
+                    <div class="form-error">{{ checkin_form.expected_check_out_date.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                {{ checkin_form.id_proof_verified }}
+                <label for="{{ checkin_form.id_proof_verified.id_for_label }}">ID Proof Verified</label>
+            </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-section">
+            <h3 class="section-title">📝 Notes</h3>
+            <div class="form-group">
+                <label class="form-label">Special Requests or Notes</label>
+                {{ checkin_form.remarks_notes }}
+                {% if checkin_form.remarks_notes.errors %}
+                <div class="form-error">{{ checkin_form.remarks_notes.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Payment Status -->
+        <!-- <div class="payment-info">
+            <strong>💳 Payment Status: Automatically set to "Paid"</strong>
+            <p style="margin: 5px 0 0 0;">Payment processing is simplified for quick check-ins</p>
+        </div> -->
+
+        <!-- Pricing Details -->
+        <div class="form-section">
+            <h3 class="section-title">💰 Pricing Details</h3>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="base_tariff">Base Tariff (₹)</label>
+                    <input type="number" 
+                           step="0.01" 
+                           class="form-control" 
+                           id="base_tariff" 
+                           name="base_tariff" 
+                           value="{{ form.base_tariff.value|default:'0.00' }}"
+                           required>
+                </div>
+                
+                    <div class="form-group col-md-6">
+                        <label for="discount_amount">Discount Amount (₹)</label>
+                        <input type="number" 
+                               step="0.01" 
+                               class="form-control" 
+                               id="discount_amount" 
+                               name="discount_amount" 
+                               value="{{ form.discount_amount.value|default:'0.00' }}">
+                    </div>
+                
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="gst_type">GST Type</label>
+                    <select class="form-control" id="gst_type" name="gst_type">
+                        <option value="INCLUDING" {% if form.gst_type.value == 'EXCLUDING' %}selected{% endif %}>Excluding GST</option>
+                        <option value="EXCLUDING" {% if form.gst_type.value == 'INCLUDING' %}selected{% endif %}>Including GST</option>
+                    </select>
+                </div>
+            </div>
+
+                
+                <div class="form-group col-md-6">
+                    <label>Final Amount (After GST & Discount)</label>
+                    <p class="form-control-static" id="final_amount">₹ 0.00</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Errors -->
+        {% if checkin_form.non_field_errors %}
+        <div class="form-error" style="margin-top: 15px;">
+            {{ checkin_form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <!-- Submit -->
+        <button type="submit" class="submit-btn">
+            Complete Check-In
+        </button>
+    </form>
+
+    <!-- Booking Form -->
+    <form method="post" id="bookingForm" class="form-container">
+        {% csrf_token %}
+
+        <!-- Guest Selection for Booking -->
+        <div class="form-section">
+            <h3 class="section-title">👤 Guest Details</h3>
+            <div class="form-group">
+                <label class="form-label">Guest <span class="required">*</span></label>
+                {{ booking_form.guest }}
+                {% if booking_form.guest.errors %}
+                <div class="form-error">{{ booking_form.guest.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Room Selection -->
+        <div class="form-section">
+            <h3 class="section-title">🏠 Room Selection</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Room Type</label>
+                    {{ booking_form.room_type }}
+                    {% if booking_form.room_type.errors %}
+                    <div class="form-error">{{ booking_form.room_type.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Specific Room</label>
+                    {{ booking_form.room }}
+                    {% if booking_form.room.errors %}
+                    <div class="form-error">{{ booking_form.room.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Dates -->
+        <div class="form-section">
+            <h3 class="section-title">📅 Booking Dates</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Check-in Date <span class="required">*</span></label>
+                    {{ booking_form.check_in_date }}
+                    {% if booking_form.check_in_date.errors %}
+                    <div class="form-error">{{ booking_form.check_in_date.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Check-out Date <span class="required">*</span></label>
+                    {{ booking_form.check_out_date }}
+                    {% if booking_form.check_out_date.errors %}
+                    <div class="form-error">{{ booking_form.check_out_date.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Guest Count -->
+        <div class="form-section">
+            <h3 class="section-title">👥 Guest Information</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Number of Adults <span class="required">*</span></label>
+                    {{ booking_form.number_of_adults }}
+                    {% if booking_form.number_of_adults.errors %}
+                    <div class="form-error">{{ booking_form.number_of_adults.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Number of Children</label>
+                    {{ booking_form.number_of_children }}
+                    {% if booking_form.number_of_children.errors %}
+                    <div class="form-error">{{ booking_form.number_of_children.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Details -->
+        <div class="form-section">
+            <h3 class="section-title">📋 Booking Details</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Booking Source</label>
+                    {{ booking_form.booking_source }}
+                    {% if booking_form.booking_source.errors %}
+                    <div class="form-error">{{ booking_form.booking_source.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rate Plan</label>
+                    {{ booking_form.rate_plan }}
+                    {% if booking_form.rate_plan.errors %}
+                    <div class="form-error">{{ booking_form.rate_plan.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Total Amount (₹)</label>
+                    {{ booking_form.total_amount }}
+                    {% if booking_form.total_amount.errors %}
+                    <div class="form-error">{{ booking_form.total_amount.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Advance Payment (₹)</label>
+                    {{ booking_form.advance_payment }}
+                    {% if booking_form.advance_payment.errors %}
+                    <div class="form-error">{{ booking_form.advance_payment.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Special Requests -->
+        <div class="form-section">
+            <h3 class="section-title">📝 Special Requests</h3>
+            <div class="form-group">
+                <label class="form-label">Special Requests or Notes</label>
+                {{ booking_form.special_requests }}
+                {% if booking_form.special_requests.errors %}
+                <div class="form-error">{{ booking_form.special_requests.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Form Errors -->
+        {% if booking_form.non_field_errors %}
+        <div class="form-error" style="margin-top: 15px;">
+            {{ booking_form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <!-- Submit -->
+        <button type="submit" name="booking_submit" class="submit-btn">
+            Create Booking
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Form toggle elements
+        const checkinToggle = document.getElementById('checkinToggle');
+        const bookingToggle = document.getElementById('bookingToggle');
+        const checkinForm = document.getElementById('checkinForm');
+        const bookingForm = document.getElementById('bookingForm');
+        
+        // Check-in form elements
+        const addGuestBtn = document.getElementById('addGuestBtn');
+        const guestForm = document.getElementById('guestForm');
+        const createNewGuestCheckbox = document.getElementById('id_create_new_guest');
+        const guestSearchInput = document.getElementById('id_guest');
+        const guestSearchResults = document.getElementById('guestSearchResults');
+        const selectedGuestInfo = document.getElementById('selectedGuestInfo');
+        const selectedGuestId = document.getElementById('selected_guest_id');
+        const clearGuestBtn = document.getElementById('clearGuestBtn');
+        const saveGuestBtn = document.getElementById('saveGuestBtn');
+        
+        let searchTimeout;
+        let selectedGuest = null;
+
+        // Form toggle functionality
+        function toggleForm(formType) {
+            if (formType === 'checkin') {
+                checkinToggle.classList.add('active');
+                bookingToggle.classList.remove('active');
+                checkinForm.classList.add('active');
+                bookingForm.classList.remove('active');
+            } else {
+                bookingToggle.classList.add('active');
+                checkinToggle.classList.remove('active');
+                bookingForm.classList.add('active');
+                checkinForm.classList.remove('active');
+            }
+        }
+
+        // Toggle button event listeners
+        checkinToggle.addEventListener('click', function() {
+            toggleForm('checkin');
+        });
+
+        bookingToggle.addEventListener('click', function() {
+            toggleForm('booking');
+        });
+
+        // Initialize form based on URL parameter or default to check-in
+        const urlParams = new URLSearchParams(window.location.search);
+        const formType = urlParams.get('form_type') || 'checkin';
+        toggleForm(formType);
+
+        // Set current time
+        const datetimeInput = document.querySelector('input[name="actual_check_in_date_time"]');
+        if (datetimeInput && !datetimeInput.value) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            datetimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        // Guest search functionality
+        guestSearchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            console.log('Search query:', query); // Debug log
+            
+            clearTimeout(searchTimeout);
+            
+            if (query.length < 2) {
+                guestSearchResults.style.display = 'none';
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                console.log('Executing search for:', query); // Debug log
+                searchGuests(query);
+            }, 300);
+        });
+
+        function searchGuests(query) {
+            // Show loading state
+            guestSearchResults.innerHTML = '<div class="guest-search-item">🔍 Searching...</div>';
+            guestSearchResults.style.display = 'block';
+            
+            fetch(`/checkin/ajax/guest-search/?q=${encodeURIComponent(query)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Search response:', data); // Debug log
+                    const guests = data.guests || data.results || [];
+                    displaySearchResults(guests);
+                })
+                .catch(error => {
+                    console.error('Error searching guests:', error);
+                    guestSearchResults.innerHTML = `<div class="guest-search-item">❌ Error searching guests: ${error.message}</div>`;
+                });
+        }
+
+        function displaySearchResults(guests) {
+            guestSearchResults.innerHTML = '';
+            
+            if (guests.length === 0) {
+                guestSearchResults.innerHTML = '<div class="guest-search-item">No guests found</div>';
+            } else {
+                guests.forEach(guest => {
+                    const item = document.createElement('div');
+                    item.className = 'guest-search-item';
+                    item.innerHTML = `
+                        <div class="guest-name">${guest.name}</div>
+                        <div class="guest-contact">${guest.email} • ${guest.phone}</div>
+                    `;
+                    item.addEventListener('click', () => selectGuest(guest));
+                    
+                    // Add hover functionality for tooltip
+                    item.addEventListener('mouseenter', (e) => showGuestTooltip(e, guest));
+                    item.addEventListener('mouseleave', hideGuestTooltip);
+                    item.addEventListener('mousemove', (e) => updateTooltipPosition(e));
+                    
+                    guestSearchResults.appendChild(item);
+                });
+            }
+            
+            guestSearchResults.style.display = 'block';
+        }
+
+        function selectGuest(guest) {
+            selectedGuest = guest;
+            selectedGuestId.value = guest.id;
+            guestSearchInput.value = guest.display;
+            guestSearchResults.style.display = 'none';
+            
+            // Show selected guest info
+            selectedGuestInfo.querySelector('.guest-details').textContent = guest.display;
+            selectedGuestInfo.style.display = 'block';
+            
+            // Hide new guest form if it's showing
+            if (guestForm.classList.contains('show')) {
+                addGuestBtn.click();
+            }
+        }
+
+        // Tooltip functionality
+        function showGuestTooltip(event, guest) {
+            const tooltip = document.getElementById('guestTooltip');
+            
+            // Update tooltip content with safe fallbacks
+            document.getElementById('tooltipName').textContent = guest.name || 'Unknown';
+            document.getElementById('tooltipContact').textContent = `${guest.email || 'No email'} • ${guest.phone || 'No phone'}`;
+            document.getElementById('tooltipAddress').textContent = guest.address || 'Not provided';
+            document.getElementById('tooltipIdProof').textContent = `${guest.id_proof_type || 'Not provided'} - ${guest.id_proof_number || 'Not provided'}`;
+            document.getElementById('tooltipGender').textContent = guest.gender || 'Not specified';
+            document.getElementById('tooltipDob').textContent = guest.date_of_birth || 'Not provided';
+            document.getElementById('tooltipBookings').textContent = `${guest.booking_count || 0} previous booking${(guest.booking_count || 0) !== 1 ? 's' : ''}`;
+            document.getElementById('tooltipBookingBadge').textContent = guest.last_booking_date || 'No previous bookings';
+            
+            // Position tooltip
+            updateTooltipPosition(event);
+            
+            // Show tooltip
+            tooltip.classList.add('show');
+        }
+
+        function hideGuestTooltip() {
+            const tooltip = document.getElementById('guestTooltip');
+            tooltip.classList.remove('show');
+        }
+
+        function updateTooltipPosition(event) {
+            const tooltip = document.getElementById('guestTooltip');
+            const rect = guestSearchResults.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            
+            // Calculate position
+            let left = event.clientX - rect.left + 10;
+            let top = event.clientY - rect.top + 10;
+            
+            // Adjust if tooltip goes off screen
+            if (left + tooltipRect.width > window.innerWidth - 20) {
+                left = event.clientX - rect.left - tooltipRect.width - 10;
+            }
+            
+            if (top + tooltipRect.height > window.innerHeight - 20) {
+                top = event.clientY - rect.top - tooltipRect.height - 10;
+            }
+            
+            // Ensure tooltip stays within search results container
+            left = Math.max(10, Math.min(left, rect.width - tooltipRect.width - 10));
+            top = Math.max(10, Math.min(top, rect.height - tooltipRect.height - 10));
+            
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+        }
+
+        // Clear guest selection
+        clearGuestBtn.addEventListener('click', function() {
+            selectedGuest = null;
+            selectedGuestId.value = '';
+            guestSearchInput.value = '';
+            selectedGuestInfo.style.display = 'none';
+        });
+
+        // Hide search results and tooltip when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!guestSearchInput.contains(e.target) && !guestSearchResults.contains(e.target)) {
+                guestSearchResults.style.display = 'none';
+                hideGuestTooltip();
+            }
+        });
+
+        // Toggle guest form
+        addGuestBtn.addEventListener('click', function () {
+            const isShowing = guestForm.classList.contains('show');
+
+            if (isShowing) {
+                guestForm.classList.remove('show');
+                addGuestBtn.textContent = '➕ Add New Guest';
+                addGuestBtn.classList.remove('cancel');
+                createNewGuestCheckbox.checked = false;
+                guestSearchInput.disabled = false;
+
+                // Clear guest fields
+                guestForm.querySelectorAll('input, select, textarea').forEach(field => {
+                    if (field.type !== 'hidden') field.value = '';
+                });
+            } else {
+                guestForm.classList.add('show');
+                addGuestBtn.textContent = '❌ Cancel';
+                addGuestBtn.classList.add('cancel');
+                createNewGuestCheckbox.checked = true;
+                guestSearchInput.disabled = true;
+                guestSearchInput.value = '';
+                selectedGuestInfo.style.display = 'none';
+            }
+        });
+
+        // Save guest data functionality
+        saveGuestBtn.addEventListener('click', function() {
+            const formData = new FormData();
+            formData.append('first_name', document.querySelector('[name="guest_first_name"]').value);
+            formData.append('last_name', document.querySelector('[name="guest_last_name"]').value);
+            formData.append('email', document.querySelector('[name="guest_email"]').value);
+            formData.append('phone', document.querySelector('[name="guest_phone"]').value);
+            formData.append('address', document.querySelector('[name="guest_address"]').value);
+            formData.append('id_proof_type', document.querySelector('[name="guest_id_proof_type"]').value);
+            formData.append('id_proof_number', document.querySelector('[name="guest_id_proof_number"]').value);
+            
+            // Include optional fields if they exist
+            const dobField = document.querySelector('[name="guest_date_of_birth"]');
+            if (dobField && dobField.value) {
+                formData.append('date_of_birth', dobField.value);
+            }
+            
+            const genderField = document.querySelector('[name="guest_gender"]');
+            if (genderField && genderField.value) {
+                formData.append('gender', genderField.value);
+            }
+            
+            // Add CSRF token
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name="csrfmiddlewaretoken"]').value);
+            
+            // Disable button and show loading
+            saveGuestBtn.disabled = true;
+            saveGuestBtn.textContent = '💾 Saving...';
+            
+            fetch('/checkin/api/save-guest/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Guest saved successfully
+                    alert('Guest data saved successfully!');
+                    
+                    // Select the newly created guest
+                    selectGuest(data.guest);
+                    
+                    // Hide the new guest form
+                    addGuestBtn.click();
+                    
+                    // Clear the form fields
+                    guestForm.querySelectorAll('input, select, textarea').forEach(field => {
+                        if (field.type !== 'hidden') field.value = '';
+                    });
+                } else {
+                    alert('Error saving guest: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error saving guest:', error);
+                alert('Error saving guest data. Please try again.');
+            })
+            .finally(() => {
+                // Re-enable button
+                saveGuestBtn.disabled = false;
+                saveGuestBtn.textContent = '💾 Save Guest Data';
+            });
+        });
+
+        // Handle file input styling and preview
+        const fileInput = document.querySelector('input[name="guest_id_proof_image"]');
+        if (fileInput) {
+            // Create custom file input wrapper
+            const wrapper = document.createElement('div');
+            wrapper.className = 'file-input-wrapper';
+            
+            const label = document.createElement('label');
+            label.className = 'file-input-label';
+            label.innerHTML = `
+                <span class="file-icon">📄</span>
+                <span class="file-text">Click to upload ID proof image or drag and drop</span>
+            `;
+            
+            // Replace the original input
+            fileInput.parentNode.insertBefore(wrapper, fileInput);
+            wrapper.appendChild(fileInput);
+            wrapper.appendChild(label);
+            
+            // Handle file selection
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Update label
+                    label.classList.add('has-file');
+                    label.innerHTML = `
+                        <span class="file-icon">✅</span>
+                        <span class="file-text">
+                            <div class="file-name">${file.name}</div>
+                            <div style="font-size: 12px; color: #666;">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                        </span>
+                    `;
+                    
+                    // Show image preview if it's an image
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            let preview = wrapper.querySelector('.image-preview');
+                            if (!preview) {
+                                preview = document.createElement('img');
+                                preview.className = 'image-preview';
+                                wrapper.appendChild(preview);
+                            }
+                            preview.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                } else {
+                    // Reset label
+                    label.classList.remove('has-file');
+                    label.innerHTML = `
+                        <span class="file-icon">📄</span>
+                        <span class="file-text">Click to upload ID proof image or drag and drop</span>
+                    `;
+                    
+                    // Remove preview
+                    const preview = wrapper.querySelector('.image-preview');
+                    if (preview) {
+                        preview.remove();
+                    }
+                }
+            });
+            
+            // Make label clickable
+            label.addEventListener('click', function() {
+                fileInput.click();
+            });
+        }
+
+        // Booking form room type selection functionality
+        const roomTypeSelect = document.querySelector('#id_room_type');
+        const roomSelect = document.querySelector('#id_room');
+        
+        if (roomTypeSelect && roomSelect) {
+            roomTypeSelect.addEventListener('change', function() {
+                const roomTypeId = this.value;
+                if (roomTypeId) {
+                    // Enable room selection and populate rooms
+                    roomSelect.disabled = false;
+                    roomSelect.innerHTML = '<option value="">Loading rooms...</option>';
+                    
+                    // Fetch available rooms for the selected room type
+                    fetch(`/booking/api/rooms-by-type/?room_type=${roomTypeId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            roomSelect.innerHTML = '<option value="">Select Room</option>';
+                            data.rooms.forEach(room => {
+                                const option = document.createElement('option');
+                                option.value = room.id;
+                                option.textContent = `${room.room_number} - ${room.room_type_name} (₹${room.price})`;
+                                roomSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching rooms:', error);
+                            roomSelect.innerHTML = '<option value="">Error loading rooms</option>';
+                        });
+                } else {
+                    roomSelect.disabled = true;
+                    roomSelect.innerHTML = '<option value="">First select a room type</option>';
+                }
+            });
+        }
+
+        // Form validation for check-in form
+        document.getElementById('checkinForm').addEventListener('submit', function (e) {
+            const createNewGuest = createNewGuestCheckbox.checked;
+            const hasSelectedGuest = selectedGuestId.value;
+
+            if (!createNewGuest && !hasSelectedGuest) {
+                e.preventDefault();
+                alert('Please search and select a guest or add a new guest.');
+                return false;
+            }
+
+            if (createNewGuest) {
+                const requiredFields = ['guest_first_name', 'guest_last_name', 'guest_email', 'guest_phone'];
+                let hasErrors = false;
+
+                requiredFields.forEach(fieldName => {
+                    const field = document.querySelector(`[name="${fieldName}"]`);
+                    if (field && !field.value.trim()) {
+                        hasErrors = true;
+                        field.style.borderColor = '#dc3545';
+                    }
+                });
+
+                if (hasErrors) {
+                    e.preventDefault();
+                    alert('Please fill in all required guest fields.');
+                    return false;
+                }
+            }
+        });
+
+        // Form validation for booking form
+        document.getElementById('bookingForm').addEventListener('submit', function (e) {
+            const guest = document.querySelector('#id_guest').value;
+            const checkInDate = document.querySelector('#id_check_in_date').value;
+            const checkOutDate = document.querySelector('#id_check_out_date').value;
+            const room = document.querySelector('#id_room').value;
+
+            if (!guest || !checkInDate || !checkOutDate || !room) {
+                e.preventDefault();
+                alert('Please fill in all required booking fields.');
+                return false;
+            }
+
+            // Validate dates
+            const checkIn = new Date(checkInDate);
+            const checkOut = new Date(checkOutDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (checkIn < today) {
+                e.preventDefault();
+                alert('Check-in date cannot be in the past.');
+                return false;
+            }
+
+            if (checkOut <= checkIn) {
+                e.preventDefault();
+                alert('Check-out date must be after check-in date.');
+                return false;
+            }
+        });
+
+        // Pricing details calculation
+        const baseTariffInput = document.getElementById('base_tariff');
+        const gstTypeSelect = document.getElementById('gst_type');
+        const discountInput = document.getElementById('discount_amount');
+        const finalAmountDisplay = document.getElementById('final_amount');
+
+        function calculateFinalAmount() {
+            const baseTariff = parseFloat(baseTariffInput.value) || 0;
+            const gstType = gstTypeSelect.value;
+            const discount = parseFloat(discountInput.value) || 0;
+            
+            let finalAmount;
+            const gstRate = 0.18; // 9% CGST + 9% SGST = 18%
+
+            if (gstType === 'INCLUDING') {
+                finalAmount = baseTariff; // GST already included
+            } else {
+                finalAmount = baseTariff * (1 + gstRate); // Add GST
+            }
+
+            finalAmount -= discount; // Subtract discount
+            finalAmountDisplay.textContent = `₹ ${finalAmount.toFixed(2)}`;
+        }
+
+        // Add event listeners for real-time calculation
+        [baseTariffInput, gstTypeSelect, discountInput].forEach(element => {
+            element.addEventListener('input', calculateFinalAmount);
+            element.addEventListener('change', calculateFinalAmount);
+        });
+
+        // Initial calculation
+        calculateFinalAmount();
+    });
+</script>
+{% endblock %}

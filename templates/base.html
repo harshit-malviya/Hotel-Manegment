@@ -1,0 +1,238 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hotel Management System - AAtithya</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}" />
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon.ico' %}" />
+
+  <!-- Meta tags -->
+  <meta name="description"
+    content="AAtithya Hotel Management System - Comprehensive hotel room and guest management solution" />
+  <meta name="keywords" content="hotel, management, rooms, booking, AAtithya" />
+  <meta name="author" content="AAtithya" />
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/common.css' %}" />
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <div class="container">
+    <div class="main-content">
+      <header></header>
+
+      <main>{% block content %} {% endblock %}</main>
+
+      <footer></footer>
+    </div>
+
+    <nav class="left-navbar" id="leftNavbar">
+      <div class="navbar-content">
+        <div class="navbar-header">
+          <a href="/" class="brand-name" style="text-decoration: none; color: white; display: block;">
+            <span class="brand-icon">🏨</span>
+            <span class="brand-text">Atithya</span>
+          </a>
+          <button class="navbar-collapse-btn" onclick="toggleNavbarCollapse()" title="Collapse/Expand Navbar">
+            <span class="collapse-icon">◀</span>
+          </button>
+        </div>
+
+        <ul class="nav-menu">
+          <!-- Main Dashboard -->
+          <li class="nav-item">
+            <a href="/" class="nav-link" data-tooltip="Dashboard">
+              <span class="nav-icon">🏠</span>
+              <span>Dashboard</span>
+            </a>
+          </li>
+
+          <!-- Check-In -->
+          <li class="nav-item nav-dropdown" id="checkinMasterDropdown">
+            <div class="nav-link nav-dropdown-toggle" onclick="toggleDropdown('checkinMasterDropdown')"
+              data-tooltip="Check-In">
+              <span>
+                <span class="nav-icon">🏨</span>
+                <span>Check-In</span>
+              </span>
+              <span class="nav-dropdown-arrow">▼</span>
+            </div>
+            <div class="nav-dropdown-menu">
+              <div class="nav-dropdown-item">
+                <a href="{% url 'checkin-dashboard' %}">📊 Dashboard</a>
+              </div>
+              <div class="nav-dropdown-item">
+                <a href="{% url 'quick-checkin' %}">⚡ Quick Check-In</a>
+              </div>
+              <div class="nav-dropdown-item">
+                <a href="{% url 'checkin-create' %}">➕ New Check-In</a>
+              </div>
+              <div class="nav-dropdown-item">
+                <a href="{% url 'checkin-list' %}">📋 All Check-Ins</a>
+              </div>
+            </div>
+          </li>
+
+          <!-- Booking Master -->
+          <li class="nav-item nav-dropdown" id="bookingMasterDropdown">
+            <div class="nav-link nav-dropdown-toggle" onclick="toggleDropdown('bookingMasterDropdown')"
+              data-tooltip="Bookings">
+              <span>
+                <span class="nav-icon">📋</span>
+                <span>Bookings</span>
+              </span>
+              <span class="nav-dropdown-arrow">▼</span>
+            </div>
+            <div class="nav-dropdown-menu">
+              <div class="nav-dropdown-item">
+                <a href="{% url 'booking-list' %}">📋 All Bookings</a>
+              </div>
+              <div class="nav-dropdown-item">
+                <a href="{% url 'reservation-source-list' %}">🌐 Reservation Sources</a>
+              </div>
+              <div class="nav-dropdown-item">
+                <a href="{% url 'corporate-agent-list' %}">🏢 Corporate/Agents</a>
+              </div>
+            </div>
+          </li>
+
+          <!-- Housekeeping -->
+          <li class="nav-item nav-dropdown" id="housekeepingMasterDropdown">
+            <div class="nav-link nav-dropdown-toggle" onclick="toggleDropdown('housekeepingMasterDropdown')"
+              data-tooltip="Housekeeping">
+              <span>
+                <span class="nav-icon">🧹</span>
+                <span>Housekeeping</span>
+              </span>
+              <span class="nav-dropdown-arrow">▼</span>
+            </div>
+            <div class="nav-dropdown-menu">
+              <div class="nav-dropdown-item">
+                <a href="{% url 'housekeeping-dashboard' %}">📊 Dashboard</a>
+              </div>
+              <div class="nav-dropdown-item">
+                <a href="{% url 'housekeeping-task-list' %}">📋 Tasks</a>
+              </div>
+              <div class="nav-dropdown-item">
+                <a href="{% url 'housekeeping-inspection-list' %}">🔍 Inspections</a>
+              </div>
+              <div class="nav-dropdown-item">
+                <a href="{% url 'housekeeping-status-list' %}">📊 Status Master</a>
+              </div>
+            </div>
+          </li>
+
+          <!-- Room Master -->
+          <li class="nav-item nav-dropdown" id="roomMasterDropdown">
+            <div class="nav-link nav-dropdown-toggle" onclick="toggleDropdown('roomMasterDropdown')"
+              data-tooltip="Rooms">
+              <span>
+                <span class="nav-icon">🏨</span>
+                <span>Rooms</span>
+              </span>
+              <span class="nav-dropdown-arrow">▼</span>
+            </div>
+            <div class="nav-dropdown-menu">
+              <div class="nav-dropdown-item">
+                <a href="{% url 'room-list' %}">🏨 Room List</a>
+              </div>
+              <div class="nav-dropdown-item">
+                <a href="{% url 'roomtype-list' %}">🏛️ Room Types</a>
+              </div>
+            </div>
+          </li>
+
+          <!-- Guest Master 
+          <li class="nav-item nav-dropdown" id="guestMasterDropdown">
+            <div class="nav-link nav-dropdown-toggle" onclick="toggleDropdown('guestMasterDropdown')" data-tooltip="Guests">
+              <span>
+                <span class="nav-icon">👥</span>
+                <span>Guests</span>
+              </span>
+              <span class="nav-dropdown-arrow">▼</span>
+            </div>
+            <div class="nav-dropdown-menu">
+              <div class="nav-dropdown-item">
+                <a href="{% url 'guest-list' %}">👥 Guest List</a>
+              </div>
+            </div>
+          </li> -->
+          <li class="nav-item">
+            <a href="{% url 'guest-list' %}" class="nav-link" data-tooltip="Rate Master">
+              <span class="nav-icon">👥</span>
+              <span>Guest List</span>
+            </a>
+          </li>
+
+          <!-- Amenities & Services -->
+          <li class="nav-item nav-dropdown" id="amenitiesMasterDropdown">
+            <div class="nav-link nav-dropdown-toggle" onclick="toggleDropdown('amenitiesMasterDropdown')"
+              data-tooltip="Services">
+              <span>
+                <span class="nav-icon">🛎️</span>
+                <span>Services</span>
+              </span>
+              <span class="nav-dropdown-arrow">▼</span>
+            </div>
+            <div class="nav-dropdown-menu">
+              <div class="nav-dropdown-item">
+                <a href="{% url 'amenity-list' %}">🛎️ Amenities</a>
+              </div>
+              <div class="nav-dropdown-item">
+                <a href="{% url 'service-list' %}">🛎️ Services</a>
+              </div>
+            </div>
+          </li>
+
+          <!-- Rate Master -->
+          <li class="nav-item">
+            <a href="{% url 'rate-plan-list' %}" class="nav-link" data-tooltip="Rate Master">
+              <span class="nav-icon">💰</span>
+              <span>Rate Master</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-tooltip="Billing">
+              <span class="nav-icon">💳</span>
+              <span>Billing</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-tooltip="Reports">
+              <span class="nav-icon">📊</span>
+              <span>Reports</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-tooltip="Settings">
+              <span class="nav-icon">⚙️</span>
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="nav-footer">© 2025 Atithya Hotel Management</div>
+    </nav>
+
+    <button class="mobile-toggle" onclick="toggleMobileNav()" style="display: none">
+      ☰
+    </button>
+  </div>
+
+  <!-- JavaScript Files -->
+  <script src="{% static 'js/base.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>

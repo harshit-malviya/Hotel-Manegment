@@ -1,0 +1,728 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load datetime_filters %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/common.css' %}" />
+<style>
+    /* Override body background for dashboard */
+    body {
+        background: #f8f9fa !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* Force container layout */
+    .container {
+        display: flex !important;
+        min-height: 100vh !important;
+    }
+    
+    /* Force proper main content positioning */
+    .main-content {
+        background: #f8f9fa !important;
+        min-height: 100vh;
+        overflow-x: hidden;
+        padding-left: 280px !important; /* Force navbar spacing */
+        transition: padding-left 0.3s ease;
+    }
+    
+    /* When navbar is collapsed */
+    .main-content.navbar-collapsed {
+        padding-left: 70px !important;
+    }
+    
+    /* Dashboard container - ensure it stays within main-content bounds */
+    .checkin-dashboard {
+        padding: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+    }
+    
+    /* Ensure proper spacing on mobile */
+    @media (max-width: 768px) {
+        .checkin-dashboard {
+            padding: 15px;
+            margin-top: 60px; /* Account for mobile toggle button */
+        }
+        
+        .main-content {
+            padding-left: 0 !important;
+        }
+    }
+    
+    .dashboard-header {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+    }
+    
+    .dashboard-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .dashboard-subtitle {
+        color: #6c757d;
+        font-size: 1rem;
+        margin-bottom: 25px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .action-btn {
+        background: #667eea;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .action-btn:hover {
+        background: #5a6fd8;
+        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    .action-btn.success {
+        background: #28a745;
+    }
+    
+    .action-btn.success:hover {
+        background: #218838;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        background: #f8f9fa;
+        color: #667eea;
+    }
+    
+    .stat-content {
+        text-align: left;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 4px;
+        line-height: 1;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+    }
+    
+    .main-content, .sidebar {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f8f9fa;
+    }
+    
+    .section-title .icon {
+        margin-right: 8px;
+        font-size: 1.3rem;
+    }
+    
+    .checkin-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 0;
+        border-bottom: 1px solid #f8f9fa;
+        transition: all 0.2s ease;
+    }
+    
+    .checkin-item:hover {
+        background: #f8f9fa;
+        margin: 0 -16px;
+        padding: 16px;
+        border-radius: 8px;
+    }
+    
+    .checkin-item:last-child {
+        border-bottom: none;
+    }
+    
+    .checkin-info {
+        flex: 1;
+    }
+    
+    .guest-name {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 0.95rem;
+        margin-bottom: 4px;
+    }
+    
+    .checkin-details {
+        font-size: 0.8rem;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    
+    .status-paid {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-partial {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-pending {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .view-btn {
+        background: #667eea;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border: none;
+    }
+    
+    .view-btn:hover {
+        background: #5a6fd8;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+    
+    .sidebar-section {
+        margin-bottom: 24px;
+    }
+    
+    .sidebar-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    .room-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 8px;
+        max-height: 180px;
+        overflow-y: auto;
+    }
+    
+    .room-item {
+        background: #f8f9fa;
+        padding: 12px 8px;
+        border-radius: 8px;
+        text-align: center;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        border: 1px solid #e9ecef;
+    }
+    
+    .room-item:hover {
+        background: #667eea;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+        border-color: #667eea;
+    }
+    
+    .room-number {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+    }
+    
+    .room-view {
+        font-size: 0.7rem;
+        opacity: 0.8;
+    }
+    
+    .quick-actions {
+        display: grid;
+        gap: 8px;
+    }
+    
+    .quick-action-btn {
+        background: #f8f9fa;
+        color: #495057;
+        padding: 10px 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+        text-align: center;
+        border: 1px solid #e9ecef;
+        cursor: pointer;
+    }
+    
+    .quick-action-btn:hover {
+        background: #667eea;
+        color: white;
+        text-decoration: none;
+        border-color: #667eea;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 30px 15px;
+        color: #6c757d;
+    }
+    
+    .empty-state .icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        opacity: 0.4;
+    }
+    
+    .payment-status-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 8px 12px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .recent-activity-item {
+        margin-bottom: 10px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+        .checkin-dashboard {
+            max-width: 100%;
+            padding: 15px;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .checkin-dashboard {
+            padding: 15px;
+            margin-top: 60px; /* Account for mobile toggle button */
+        }
+        
+        .content-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .dashboard-title {
+            font-size: 1.8rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-card {
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            padding: 20px;
+        }
+    }
+    
+    /* Temporary debug - you can remove this after confirming it works */
+    .main-content {
+        border: 2px solid red !important;
+        box-sizing: border-box !important;
+    }
+    .checkin-dashboard {
+        border: 2px solid blue !important;
+        margin-left: 0 !important;
+    }
+    
+    /* Force navbar to stay in position */
+    .left-navbar {
+        position: fixed !important;
+        z-index: 1000 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkin-dashboard">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <span>🏨</span>
+            Check-In Dashboard
+        </h1>
+        <p class="dashboard-subtitle">Manage guest check-ins and monitor hotel operations</p>
+        <div class="action-buttons">
+            <a href="{% url 'enhanced-checkin-create' %}" class="action-btn success">
+                ✨ Enhanced Check-In
+            </a>
+            <a href="{% url 'quick-checkin' %}" class="action-btn">
+                ⚡ Quick Check-In
+            </a>
+            <a href="{% url 'checkin-create' %}" class="action-btn">
+                ➕ Standard Check-In
+            </a>
+            <a href="{% url 'checkin-list' %}" class="action-btn">
+                📋 View All Check-Ins
+            </a>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-content">
+                    <div class="stat-number">{{ total_checkins }}</div>
+                    <div class="stat-label">Total Check-Ins</div>
+                </div>
+                <div class="stat-icon">🏨</div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-content">
+                    <div class="stat-number">{{ todays_checkins }}</div>
+                    <div class="stat-label">Today's Check-Ins</div>
+                </div>
+                <div class="stat-icon">📅</div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-content">
+                    <div class="stat-number">{{ pending_payments }}</div>
+                    <div class="stat-label">Pending Payments</div>
+                </div>
+                <div class="stat-icon">💳</div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-content">
+                    <div class="stat-number">{{ unverified_ids }}</div>
+                    <div class="stat-label">Unverified IDs</div>
+                </div>
+                <div class="stat-icon">🆔</div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-content">
+                    <div class="stat-number">{{ available_rooms.count }}</div>
+                    <div class="stat-label">Available Rooms</div>
+                </div>
+                <div class="stat-icon">🏠</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div class="main-content">
+            <h3 class="section-title">
+                <span class="icon">📅</span>
+                Today's Check-Ins ({{ todays_checkins }})
+            </h3>
+            
+            {% if todays_checkin_list %}
+                <div style="max-height: 500px; overflow-y: auto;">
+                    {% for checkin in todays_checkin_list %}
+                    <div class="checkin-item">
+                        <div class="checkin-info">
+                            <div class="guest-name">
+                                {{ checkin.guest.full_name }} - Room {{ checkin.room_number.room_number }}
+                            </div>
+                            <div class="checkin-details">
+                                <span>{{ checkin.check_in_id }}</span>
+                                <span>•</span>
+                                <span>{{ checkin.actual_check_in_date_time|indian_time_12h }}</span>
+                                {% if checkin.is_walk_in %}
+                                    <span>• 🚶 Walk-in</span>
+                                {% else %}
+                                    <span>• 📋 Booking</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="status-badge {% if checkin.payment_status == 'PAID' %}status-paid{% elif checkin.payment_status == 'PARTIAL' %}status-partial{% else %}status-pending{% endif %}">
+                                {{ checkin.get_payment_status_display }}
+                            </span>
+                            <a href="{% url 'checkin-detail' checkin.id %}" class="view-btn">View</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div style="text-align: center; margin-top: 25px;">
+                    <a href="{% url 'checkin-list' %}?date_range=today" class="action-btn">View All Today's Check-Ins</a>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">📅</div>
+                    <p>No check-ins today</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h4 class="section-title">
+                    <span class="icon">🏠</span>
+                    Available Rooms
+                </h4>
+                <form method="get" style="margin-bottom: 15px;">
+                    <select name="room_view" onchange="this.form.submit()" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: white;">
+                        <option value="">All Views</option>
+                        {% for view_value, view_name in room_views %}
+                            <option value="{{ view_value }}" {% if selected_view == view_value %}selected{% endif %}>
+                                {{ view_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+                <div class="room-grid">
+                    {% for room in available_rooms %}
+                        <a href="{% url 'enhanced-checkin-create' %}?room_id={{ room.id }}" class="room-item">
+                            <div class="room-number">{{ room.room_number }}</div>
+                            <div class="room-view">{{ room.get_view_display }}</div>
+                        </a>
+                    {% empty %}
+                        <div class="empty-state">
+                            <div class="icon">🏠</div>
+                            <p>No available rooms</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4 class="section-title">
+                    <span class="icon">💳</span>
+                    Payment Status
+                </h4>
+                {% for status in payment_summary %}
+                <div class="payment-status-item">
+                    <span style="color: #6c757d; font-weight: 500;">{{ status.payment_status|capfirst }}</span>
+                    <span style="font-weight: 700; color: {% if status.payment_status == 'PAID' %}#28a745{% elif status.payment_status == 'PARTIAL' %}#ffc107{% else %}#dc3545{% endif %}">
+                        {{ status.count }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="sidebar-section">
+                <h4 class="section-title">
+                    <span class="icon">⚡</span>
+                    Quick Actions
+                </h4>
+                <div class="quick-actions">
+                    <a href="{% url 'enhanced-checkin-create' %}" class="quick-action-btn">
+                        ✨ Enhanced Check-In
+                    </a>
+                    <a href="{% url 'quick-checkin' %}" class="quick-action-btn">
+                        🚶 Walk-in Check-In
+                    </a>
+                    <a href="{% url 'checkin-create' %}" class="quick-action-btn">
+                        📋 Standard Check-In
+                    </a>
+                    <a href="{% url 'checkin-list' %}?payment_status=PENDING" class="quick-action-btn">
+                        💳 Pending Payments
+                    </a>
+                    <a href="{% url 'checkin-list' %}?id_verified=false" class="quick-action-btn">
+                        🆔 Verify IDs
+                    </a>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4 class="section-title">
+                    <span class="icon">🕒</span>
+                    Recent Activity
+                </h4>
+                {% if recent_checkins %}
+                    {% for checkin in recent_checkins|slice:":5" %}
+                    <div class="recent-activity-item">
+                        <div style="font-weight: 600; font-size: 0.9rem; color: #2c3e50;">{{ checkin.guest.full_name }}</div>
+                        <div style="font-size: 0.8rem; color: #6c757d; margin-top: 3px;">
+                            Room {{ checkin.room_number.room_number }} • {{ checkin.actual_check_in_date_time|indian_date }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="{% url 'checkin-list' %}" class="quick-action-btn">View All</a>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="icon">🕒</div>
+                        <p>No recent activity</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script>
+// Fix dashboard layout positioning
+document.addEventListener('DOMContentLoaded', function() {
+    function fixDashboardLayout() {
+        const mainContent = document.querySelector('.main-content');
+        const navbar = document.getElementById('leftNavbar');
+        
+        if (mainContent && navbar) {
+            // Force correct padding based on navbar state
+            if (navbar.classList.contains('collapsed')) {
+                mainContent.style.paddingLeft = '70px';
+                mainContent.classList.add('navbar-collapsed');
+            } else {
+                mainContent.style.paddingLeft = '280px';
+                mainContent.classList.remove('navbar-collapsed');
+            }
+            
+            // Ensure background is set
+            mainContent.style.background = '#f8f9fa';
+            
+            // On mobile, remove padding
+            if (window.innerWidth <= 768) {
+                mainContent.style.paddingLeft = '0';
+            }
+        }
+    }
+    
+    // Fix layout immediately
+    fixDashboardLayout();
+    
+    // Fix on window resize
+    window.addEventListener('resize', fixDashboardLayout);
+    
+    // Override navbar collapse function to fix layout
+    if (typeof window.toggleNavbarCollapse === 'function') {
+        const originalToggle = window.toggleNavbarCollapse;
+        window.toggleNavbarCollapse = function() {
+            originalToggle();
+            setTimeout(fixDashboardLayout, 50); // Quick fix after toggle
+        };
+    }
+});
+</script>
+{% endblock %}
