@@ -4,7 +4,7 @@ from .models import RatePlan
 @admin.register(RatePlan)
 class RatePlanAdmin(admin.ModelAdmin):
     list_display = [
-        'rate_plan_id', 'rate_name', 'room_type', 'season_type',
+        'rate_plan_id','time_slot', 'rate_name', 'room_type', 'season_type',
         'base_rate', 'base_rate_for_24', 'meal_plan', 'validity_period', 'is_active', 'created_at'
     ]
     list_filter = [
@@ -18,7 +18,7 @@ class RatePlanAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('rate_plan_id', 'rate_name', 'room_type', 'season_type', 'is_active')
+            'fields': ('rate_plan_id', 'rate_name','time_slot', 'room_type', 'season_type', 'is_active')
         }),
         ('Validity Period', {
             'fields': ('valid_from', 'valid_to', 'validity_period')

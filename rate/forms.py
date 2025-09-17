@@ -8,7 +8,7 @@ class RatePlanForm(forms.ModelForm):
     class Meta:
         model = RatePlan
         fields = [
-            'rate_name', 'room_type', 'season_type', 'valid_from', 'valid_to',
+            'rate_name', 'room_type', 'time_slot', 'season_type', 'valid_from', 'valid_to',
             'base_rate', 'base_rate_for_24', 'additional_guest_charges', 'meal_plan', 'meal_plan_cost',
             'cancellation_policy', 'description', 'weekend_surcharge', 
             'is_percentage_surcharge', 'is_active', 'minimum_stay', 'maximum_stay',
@@ -21,6 +21,9 @@ class RatePlanForm(forms.ModelForm):
                 'placeholder': 'Enter rate plan name (e.g., Summer Special)'
             }),
             'room_type': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'time_slot': forms.Select(attrs={
                 'class': 'form-control'
             }),
             'season_type': forms.Select(attrs={

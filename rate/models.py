@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 from rooms.models import RoomType
-
+from timemaster.models import TimeEntry
 class RatePlan(models.Model):
     MEAL_PLAN_CHOICES = [
         ('EP', 'European Plan (Room Only)'),
@@ -35,6 +35,12 @@ class RatePlan(models.Model):
         on_delete=models.CASCADE,
         related_name='rate_plans',
         help_text="Links to Room Type Master"
+    )
+    time_slot = models.ForeignKey(
+        TimeEntry,
+        on_delete=models.CASCADE,
+        related_name='rate_plans',
+        help_text="Links to Time Slot Master"
     )
     
     # Season/Date Range

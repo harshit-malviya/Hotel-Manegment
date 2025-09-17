@@ -42,6 +42,17 @@
                             </div>
                         {% endif %}
                     </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">
+                            {{ form.time_slot.label }}
+                        </label>
+                        {{ form.time_slot }}
+                        {% if form.time_slot.errors %}
+                            <div style="color: #dc3545; font-size: 14px; margin-top: 5px;">
+                                {{ form.time_slot.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div>
