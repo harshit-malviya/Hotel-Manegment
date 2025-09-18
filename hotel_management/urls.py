@@ -30,7 +30,7 @@ urlpatterns = [
     path('housekeeping/', include('housekeeping.urls')),
     path('checkin/', include('checkin.urls')),
     path('', include('dashboard.urls')),  # Default to dashboard home
-    path('timemaster/', include('timemaster.urls', namespace='timemaster')),
+    path('timeslotmaster/', include('timeslotmaster.urls')),
 ]
 
 # Serve media files during development

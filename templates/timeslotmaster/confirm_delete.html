@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg border-0 rounded-3 p-4 text-center" style="max-width: 600px; width: 100%;">
+        <h4>Are you sure you want to delete</h4>
+        <h2><strong>{{ timeslot.name }} ({{ timeslot.time }} hrs)?</strong></h2>
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="d-flex justify-content-center gap-2">
+                <button type="submit" class="btn btn-danger px-4">Yes, delete</button>
+                <a href="{% url 'timeslot_list' %}" class="btn btn-secondary" >Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
