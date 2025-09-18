@@ -9,7 +9,7 @@ class RoomForm(forms.ModelForm):
             'room_number', 'room_type', 'floor', 'bed_type',
             'single_bed', 'double_bed', 'extra_bed',
             'max_occupancy', 'status', 'description',
-            'view', 'amenities', 'rate_default'
+            'view', 'amenities',
         ]
         widgets = {
             'room_number': forms.TextInput(attrs={
@@ -46,11 +46,11 @@ class RoomForm(forms.ModelForm):
             'amenities': forms.CheckboxSelectMultiple(attrs={
                 'class': 'form-check-input'
             }),
-            'rate_default': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': '0.00',
-                'step': '0.01'
-            }),
+            # 'rate_default': forms.NumberInput(attrs={
+            #     'class': 'form-control',
+            #     'placeholder': '0.00',
+            #     'step': '0.01'
+            # }),
 
         }
         labels = {
@@ -65,8 +65,7 @@ class RoomForm(forms.ModelForm):
             'status': 'Status',
             'description': 'Description/Notes',
             'view': 'View',
-            'amenities': 'Features/Amenities',
-            'rate_default': 'Rate (Default)'
+            'amenities': 'Features/Amenities'
         }
     
     def __init__(self, *args, **kwargs):
