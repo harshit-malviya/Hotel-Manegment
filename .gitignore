@@ -205,3 +205,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Ignore all migration files except __init__.py
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# Also ignore compiled Python files
+**/migrations/*.pyc
