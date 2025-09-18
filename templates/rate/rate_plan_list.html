@@ -76,7 +76,7 @@
                     <th style="padding: 15px; text-align: left;">Season</th>
                     <th style="padding: 15px; text-align: left;">Validity Period</th>
                     <th style="padding: 15px; text-align: left;">Base Rate</th>
-                    <th style="padding: 15px; text-align: left;">Meal Plan</th>
+                    <th style="padding: 15px; text-align: left;">Time Slot</th>
                     <th style="padding: 15px; text-align: left;">Status</th>
                     <th style="padding: 15px; text-align: center;">Actions</th>
                 </tr>
@@ -102,7 +102,7 @@
                         {% endif %}
                     </td>
                     <td style="padding: 15px; font-weight: bold;">₹{{ rate_plan.base_rate }}</td>
-                    <td style="padding: 15px;">{{ rate_plan.get_meal_plan_display }}</td>
+                    <td style="padding: 15px;">{{ rate_plan.time_slot }}</td>
                     <td style="padding: 15px;">
                         <span class="status-badge"
                             style="background: {% if rate_plan.is_active %}#28a745{% else %}#dc3545{% endif %};">
