@@ -11,7 +11,7 @@ class RoomType(models.Model):
     
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
-    price_per_night = models.DecimalField(max_digits=10, decimal_places=2)
+    # price_per_night = models.DecimalField(max_digits=10, decimal_places=2)
     capacity = models.PositiveIntegerField()
     bed_type = models.CharField(max_length=20, choices=BED_TYPE_CHOICES, default='SINGLE', verbose_name="Bed Type")
     amenities = models.ManyToManyField('amenities.Amenity', blank=True)

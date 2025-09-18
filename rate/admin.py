@@ -5,7 +5,7 @@ from .models import RatePlan
 class RatePlanAdmin(admin.ModelAdmin):
     list_display = [
         'rate_plan_id','time_slot', 'rate_name', 'room_type', 'season_type',
-        'base_rate', 'base_rate_for_24', 'meal_plan', 'validity_period', 'is_active', 'created_at'
+        'base_rate', 'meal_plan', 'validity_period', 'is_active', 'created_at'
     ]
     list_filter = [
         'season_type', 'meal_plan', 'is_active', 'room_type',
@@ -24,7 +24,7 @@ class RatePlanAdmin(admin.ModelAdmin):
             'fields': ('valid_from', 'valid_to', 'validity_period')
         }),
         ('Pricing', {
-            'fields': ('base_rate', 'base_rate_for_24', 'additional_guest_charges', 'weekend_surcharge', 'is_percentage_surcharge')
+            'fields': ('base_rate', 'additional_guest_charges', 'weekend_surcharge', 'is_percentage_surcharge')
         }),
         ('Meal Plan', {
             'fields': ('meal_plan', 'meal_plan_cost')

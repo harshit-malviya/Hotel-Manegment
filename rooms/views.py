@@ -105,7 +105,7 @@ def get_room_type_details(request, room_type_id):
         data = {
             'bed_type': room_type.bed_type,
             'max_occupancy': room_type.capacity,
-            'rate_default': float(room_type.price_per_night),
+            # 'rate_default': float(room_type.price_per_night),
             'bed_type_display': room_type.get_bed_type_display()
         }
         return JsonResponse(data)
