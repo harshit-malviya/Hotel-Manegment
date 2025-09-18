@@ -81,10 +81,6 @@ class Room(models.Model):
     view = models.CharField(max_length=20, choices=VIEW_CHOICES, blank=True, verbose_name="View")
     amenities = models.ManyToManyField('amenities.Amenity', blank=True, verbose_name="Features/Amenities")
     
-    # Pricing
-    rate_default = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Rate (Default)")
-    tariff = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Keep for backward compatibility
-    
     # Legacy fields for backward compatibility
     slave_time = models.CharField(max_length=100, blank=True, verbose_name="Slave Time")
     conditions = models.TextField(blank=True)

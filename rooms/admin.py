@@ -3,7 +3,7 @@ from .models import Room, RoomType, AssetType, Asset
 
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ['room_number', 'floor', 'tariff', 'single_bed', 'double_bed', 'extra_bed', 'allow_pax', 'status']
+    list_display = ['room_number', 'floor', 'single_bed', 'double_bed', 'extra_bed', 'allow_pax', 'status']
     list_filter = ['floor', 'status', 'single_bed', 'double_bed', 'extra_bed']
     search_fields = ['room_number']
     ordering = ['room_number']

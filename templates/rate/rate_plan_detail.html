@@ -73,11 +73,11 @@
                         <p style="margin: 5px 0 15px 0; font-size: 24px; font-weight: bold; color: #28a745;">{{ rate_plan.time_slot }}</p>
                         <small style="color: #666;">per night</small>
                     </div>
-                    <div>
+                    <!-- <div>
                         <strong style="color: #333;">Base Rate for 24 Hrs:</strong>
                         <p style="margin: 5px 0 15px 0; font-size: 24px; font-weight: bold; color: #28a745;">₹{{ rate_plan.base_rate_for_24 }}</p>
                         <small style="color: #666;"></small>
-                    </div>
+                    </div> -->
                     <div>
                         <strong style="color: #333;">Additional Guest Charges:</strong>
                         <p style="margin: 5px 0 15px 0; font-size: 18px; font-weight: bold; color: #fd7e14;">₹{{ rate_plan.additional_guest_charges }}</p>
@@ -211,10 +211,10 @@
                         <strong>Last Updated:</strong><br>
                         {{ rate_plan.updated_at|date:"F d, Y g:i A" }}
                     </p>
-                    <p style="margin-bottom: 0;">
+                    <!-- <p style="margin-bottom: 0;">
                         <strong>Duration:</strong><br>
                         {{ rate_plan.duration_nights }} night{{ rate_plan.duration_nights|pluralize }}
-                    </p>
+                    </p> -->
                 </div>
             </div>
         </div>
