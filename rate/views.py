@@ -6,6 +6,7 @@ from datetime import date
 from .models import RatePlan
 from .forms import RatePlanForm, RatePlanSearchForm, RateCalculatorForm
 from rooms.models import RoomType
+from django.http import JsonResponse
 
 def rate_plan_list(request):
     """Display list of all rate plans with search and filter functionality"""
@@ -211,3 +212,19 @@ def current_rates(request):
         'today': today
     }
     return render(request, 'rate/current_rates.html', context)
+
+def get_rate_by_room_type(request, room_type_id):
+    today = date.today()
+    rate_plan = RatePlan.objects.filter(
+        room_type_id=room_type_id,
+        valid_from__lte=today,
+        valid_to__gte=today,
+        is_active=True
+    ).first()
+
+    if rate_plan:
+        return JsonResponse({
+            "base_rate": str(rate_plan.base_rate),
+            "rate_name": rate_plan.rate_name,
+        })
+    return JsonResponse({"error": "No active rate found"}, status=404)

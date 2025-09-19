@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:rate_plan_id>/edit/', views.rate_plan_update, name='rate-plan-update'),
     path('<int:rate_plan_id>/delete/', views.rate_plan_delete, name='rate-plan-delete'),
     path('<int:rate_plan_id>/toggle-status/', views.rate_plan_toggle_status, name='rate-plan-toggle-status'),
+    path("get-rate/<int:room_type_id>/", views.get_rate_by_room_type, name="get-rate"),
 ]

@@ -50,6 +50,14 @@
                     </div>
                 </div>
                 <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">
+                        Rate
+                    </label>
+                    <div id="rateDiv" style="margin-top: 5px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa; font-size: 14px; color: #333;">
+                        Rate: (auto-filled)
+                    </div>
+                </div>
+                <div style="flex: 1;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 500;">Floor Number</label>
                     {{ form.floor }}
                 </div>
@@ -172,6 +180,32 @@
         pointer-events: none;
     }
 </style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const roomTypeSelect = document.querySelector('select[name="room_type"]');
+    const rateDiv = document.getElementById('rateDiv');
+
+    roomTypeSelect.addEventListener('change', function () {
+        const roomTypeId = this.value;
+        if (roomTypeId) {
+            fetch(`/rates/get-rate/${roomTypeId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.base_rate) {
+                        rateDiv.textContent = "Rate: ₹ " + data.base_rate;
+                    } else {
+                        rateDiv.textContent = "Rate: No rate available";
+                    }
+                })
+                .catch(() => {
+                    rateDiv.textContent = "Rate: Error fetching rate";
+                });
+        } else {
+            rateDiv.textContent = "Rate: (auto-filled)";
+        }
+    });
+});
+</script>
 
 
 {% endblock %}
