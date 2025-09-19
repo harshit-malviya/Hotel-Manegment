@@ -80,7 +80,6 @@ class RoomForm(forms.ModelForm):
 class RoomTypeForm(forms.ModelForm):
     class Meta:
         model = RoomType
-        # fields = ['name', 'description', 'price_per_night', 'capacity', 'bed_type', 'amenities']
         fields = ['name', 'description', 'capacity', 'bed_type', 'amenities']
         widgets = {
             'name': forms.TextInput(attrs={
@@ -92,12 +91,6 @@ class RoomTypeForm(forms.ModelForm):
                 'placeholder': 'Enter description of the room type',
                 'rows': 4
             }),
-            # 'price_per_night': forms.NumberInput(attrs={
-            #     'class': 'form-control',
-            #     'placeholder': '0.00',
-            #     'step': '0.01',
-            #     'min': '0'
-            # }),
             'capacity': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Maximum occupancy',
@@ -113,7 +106,6 @@ class RoomTypeForm(forms.ModelForm):
         labels = {
             'name': 'Room Type Name',
             'description': 'Description',
-            # 'price_per_night': 'Default Rate (₹)',
             'capacity': 'Max Occupancy',
             'bed_type': 'Bed Type',
             'amenities': 'Included Amenities',
