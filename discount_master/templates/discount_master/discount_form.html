@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="padding: 20px; max-width: 600px; margin: 0 auto;">
+    <h2 style="color: #333; margin-bottom: 30px; text-align: center;">{{ action }} Discount</h2>
+    <form method="post" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label" style="font-weight: bold;">Description</label>
+            {{ form.description }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" style="font-weight: bold;">Discount Value</label>
+            {{ form.discount_value }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label" style="font-weight: bold;">Temporary Price</label>
+            {{ form.temporary_price }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; font-weight: bold;">{{ action }}</button>
+        <a href="{% url 'discount_list' %}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+    </form>
+</div>
+{% endblock %}

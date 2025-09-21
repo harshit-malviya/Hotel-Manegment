@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'housekeeping',
     'checkin',
     'timeslotmaster',
+    'discount_master',
 ]
 
 MIDDLEWARE = [
