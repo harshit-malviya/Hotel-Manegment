@@ -1,22 +1,65 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card shadow-lg border-0 rounded-3" style="max-width: 600px; width: 100%;">
-        <div class="card-header bg-primary text-white text-center">
-            <h3 class="mb-0">Timeslot Detail</h3>
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #333; margin: 0;">Timeslot Details</h1>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'timeslot_list' %}"
+                style="background: #6c757d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                ← Back to List
+            </a>
+            <a href="{% url 'timeslot_update' timeslot.id %}"
+                style="background: #ffc107; color: black; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                ✏️ Edit Timeslot
+            </a>
         </div>
-        <div class="card-body p-4">
-            <ul class="list-group list-group-flush mb-4 text-start">
-                <li class="list-group-item"><strong>ID:</strong> {{ timeslot.id }}</li>
-                <li class="list-group-item"><strong>Name:</strong> {{ timeslot.name }}</li>
-                <li class="list-group-item"><strong>Time (hrs):</strong> {{ timeslot.time }}</li>
-            </ul>
-            <div class="d-flex justify-content-center gap-2">
-                <a href="{% url 'timeslot_update' timeslot.id %}" class="btn btn-warning px-4">Edit</a>
-                <a href="{% url 'timeslot_delete' timeslot.id %}" class="btn btn-danger px-4">Delete</a>
-                <a href="{% url 'timeslot_list' %}" class="btn btn-secondary px-4">Back to List</a>
+    </div>
+
+    <!-- Timeslot Details Card -->
+    <div style="background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px;">
+            <h2 style="margin: 0; font-size: 24px;">{{ timeslot.name }}</h2>
+            <p style="margin: 5px 0 0 0; opacity: 0.9;">Timeslot ID: {{ timeslot.id }}</p>
+        </div>
+        
+        <div style="padding: 30px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div>
+                    <h3 style="color: #333; margin-bottom: 15px; font-size: 18px;">Basic Information</h3>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Timeslot Name:</label>
+                        <p style="margin: 0; font-size: 16px; color: #333;">{{ timeslot.name }}</p>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Duration:</label>
+                        <p style="margin: 0; font-size: 16px; color: #333; font-weight: bold;">{{ timeslot.time }} hours</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 style="color: #333; margin-bottom: 15px; font-size: 18px;">Status Information</h3>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Status:</label>
+                        <span style="background: {% if timeslot.is_active %}#28a745{% else %}#dc3545{% endif %}; color: white; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: bold;">
+                            {% if timeslot.is_active %}Active{% else %}Inactive{% endif %}
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 20px; text-align: center;">
+        <a href="{% url 'timeslot_update' timeslot.id %}"
+            style="background: #ffc107; color: black; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 0 10px;">
+            ✏️ Edit Timeslot
+        </a>
+        <a href="{% url 'timeslot_delete' timeslot.id %}"
+            style="background: #dc3545; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 0 10px;">
+            🗑️ Delete Timeslot
+        </a>
     </div>
 </div>
 {% endblock %}

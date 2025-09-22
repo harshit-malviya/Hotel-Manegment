@@ -1,11 +1,13 @@
-
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import TimeslotMaster
 from .forms import TimeslotMasterForm
 
 def timeslot_list(request):
-	timeslots = TimeslotMaster.objects.all()
-	return render(request, 'timeslotmaster/list.html', {'timeslots': timeslots})
+    timeslots = TimeslotMaster.objects.all()
+    context = {
+        'timeslots': timeslots
+    }
+    return render(request, 'timeslotmaster/list.html', context)
 
 def timeslot_detail(request, pk):
 	timeslot = get_object_or_404(TimeslotMaster, pk=pk)

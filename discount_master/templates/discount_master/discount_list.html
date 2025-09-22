@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <div style="padding: 20px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
         <h1 style="color: #333; margin: 0;">Discount Master</h1>
         <div style="display: flex; gap: 10px;">
-            <a href="{% url 'discount_create' %}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">➕ New Discount</a>
+            <a href="{% url 'discount_create' %}"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                ➕ New Discount
+            </a>
         </div>
     </div>
 
@@ -18,11 +22,11 @@
         <table style="width: 100%; border-collapse: collapse;">
             <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                 <tr>
-                    <th style="padding: 15px; text-align: left;">ID</th>
+                    <th style="padding: 15px; text-align: left;">Discount ID</th>
                     <th style="padding: 15px; text-align: left;">Description</th>
                     <th style="padding: 15px; text-align: left;">Discount Value</th>
-                    <th style="padding: 15px; text-align: left;">Temporary Price</th>
-                    <th style="padding: 15px; text-align: left;">Discounted Price</th>
+                    <th style="padding: 15px; text-align: left;">Original Price</th>
+                    <th style="padding: 15px; text-align: left;">Final Price</th>
                     <th style="padding: 15px; text-align: center;">Actions</th>
                 </tr>
             </thead>
@@ -32,20 +36,37 @@
                     <td style="padding: 15px;">
                         <strong>{{ discount.discount_id }}</strong>
                     </td>
-                    <td style="padding: 15px;">{{ discount.description }}</td>
-                    <td style="padding: 15px; font-weight: bold;">{{ discount.discount_value }}</td>
-                    <td style="padding: 15px;">₹{{ discount.temporary_price }}</td>
-                    <td style="padding: 15px; font-weight: bold; color: #28a745;">₹{{ discount.calculate_discounted_price|floatformat:2 }}</td>
+                    <td style="padding: 15px;">
+                        <strong>{{ discount.description }}</strong>
+                    </td>
+                    <td style="padding: 15px;">
+                        <span style="background: #17a2b8; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">
+                            {{ discount.discount_value }}%
+                        </span>
+                    </td>
+                    <td style="padding: 15px; font-weight: bold;">₹{{ discount.temporary_price }}</td>
+                    <td style="padding: 15px; font-weight: bold; color: #28a745; font-size: 16px;">
+                        ₹{{ discount.calculate_discounted_price|floatformat:2 }}
+                    </td>
                     <td style="padding: 15px; text-align: center;">
-                        <a href="{% url 'discount_detail' discount.discount_id %}" style="background: #28a745; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; margin: 2px; font-size: 12px;">👁️ View</a>
-                        <a href="{% url 'discount_update' discount.discount_id %}" style="background: #ffc107; color: black; padding: 6px 12px; text-decoration: none; border-radius: 4px; margin: 2px; font-size: 12px;">✏️ Edit</a>
-                        <a href="{% url 'discount_delete' discount.discount_id %}" style="background: #dc3545; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; margin: 2px; font-size: 12px;">🗑️ Delete</a>
+                        <a href="{% url 'discount_detail' discount.discount_id %}"
+                            style="background: #28a745; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; margin: 2px; font-size: 12px;">
+                            👁️ View
+                        </a>
+                        <a href="{% url 'discount_update' discount.discount_id %}"
+                            style="background: #ffc107; color: black; padding: 6px 12px; text-decoration: none; border-radius: 4px; margin: 2px; font-size: 12px;">
+                            ✏️ Edit
+                        </a>
+                        <a href="{% url 'discount_delete' discount.discount_id %}"
+                            style="background: #dc3545; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; margin: 2px; font-size: 12px;">
+                            🗑️ Delete
+                        </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
                     <td colspan="6" style="padding: 40px; text-align: center; color: #666;">
-                        No discounts available. <a href="{% url 'discount_create' %}">Create the first discount</a>
+                        No discounts created yet. <a href="{% url 'discount_create' %}">Create the first discount</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -53,21 +74,4 @@
         </table>
     </div>
 </div>
-
-<style>
-    .season-badge {
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        color: white;
-        font-weight: bold;
-    }
-    .status-badge {
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        color: white;
-        font-weight: bold;
-    }
-</style>
 {% endblock %}

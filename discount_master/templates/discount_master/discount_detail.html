@@ -1,25 +1,81 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<div style="padding: 20px; max-width: 600px; margin: 0 auto;">
-    <h2 style="color: #333; margin-bottom: 30px; text-align: center;">Discount Details</h2>
-    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <dl class="row">
-            <dt class="col-sm-4">ID</dt>
-            <dd class="col-sm-8">{{ discount.discount_id }}</dd>
-            <dt class="col-sm-4">Description</dt>
-            <dd class="col-sm-8">{{ discount.description }}</dd>
-            <dt class="col-sm-4">Discount Value</dt>
-            <dd class="col-sm-8">{{ discount.discount_value }}</dd>
-            <dt class="col-sm-4">Temporary Price</dt>
-            <dd class="col-sm-8">₹{{ discount.temporary_price }}</dd>
-            <dt class="col-sm-4">Discounted Price</dt>
-            <dd class="col-sm-8 fw-bold text-success">₹{{ discount.calculate_discounted_price }}</dd>
-        </dl>
-        <div class="mt-4 text-center">
-            <a href="{% url 'discount_update' discount.discount_id %}" class="btn btn-warning" style="font-weight: bold; margin-right: 10px;">✏️ Edit</a>
-            <a href="{% url 'discount_delete' discount.discount_id %}" class="btn btn-danger" style="font-weight: bold;">🗑️ Delete</a>
-            <a href="{% url 'discount_list' %}" class="btn btn-secondary" style="font-weight: bold; margin-left: 10px;">Back to List</a>
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #333; margin: 0;">Discount Details</h1>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'discount_list' %}"
+                style="background: #6c757d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                ← Back to List
+            </a>
+            <a href="{% url 'discount_update' discount.discount_id %}"
+                style="background: #ffc107; color: black; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                ✏️ Edit Discount
+            </a>
         </div>
+    </div>
+
+    <!-- Discount Details Card -->
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div style="background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px;">
+                <h2 style="margin: 0; font-size: 24px;">{{ discount.description }}</h2>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">Discount ID: {{ discount.discount_id }}</p>
+            </div>
+
+            <div style="padding: 30px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div>
+                        <h3 style="color: #333; margin-bottom: 15px; font-size: 18px;">Discount Information</h3>
+                        <div style="margin-bottom: 15px;">
+                            <label
+                                style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Description:</label>
+                            <p style="margin: 0; font-size: 16px; color: #333;">{{ discount.description }}</p>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Discount
+                                Value:</label>
+                            <span
+                                style="background: #17a2b8; color: white; padding: 8px 16px; border-radius: 6px; font-size: 16px; font-weight: bold;">
+                                {{ discount.discount_value }}%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #333; margin-bottom: 15px; font-size: 18px;">Pricing Details</h3>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Original Price:</label>
+                            <p style="margin: 0; font-size: 18px; color: #333; font-weight: bold;">₹{{discount.temporary_price }}</p>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Final Price:</label>
+                            <p style="margin: 0; font-size: 20px; color: #28a745; font-weight: bold;">₹{{discount.calculate_discounted_price|floatformat:2 }}</p>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Discount
+                                Applied:</label>
+                            <p style="margin: 0; font-size: 16px; color: #dc3545; font-weight: bold;">
+                                {{ discount.discount_value }}% OFF
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="margin-top: 20px; text-align: center;">
+        <a href="{% url 'discount_update' discount.discount_id %}"
+            style="background: #ffc107; color: black; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 0 10px;">
+            ✏️ Edit Discount
+        </a>
+        <a href="{% url 'discount_delete' discount.discount_id %}"
+            style="background: #dc3545; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 0 10px;">
+            🗑️ Delete Discount
+        </a>
     </div>
 </div>
 {% endblock %}

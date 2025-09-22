@@ -90,8 +90,7 @@
                     </td>
                     <td style="padding: 15px;">{{ rate_plan.room_type.name }}</td>
                     <td style="padding: 15px;">
-                        <span class="season-badge"
-                            style="background: {% if rate_plan.season_type == 'PEAK' %}#dc3545{% elif rate_plan.season_type == 'HIGH' %}#fd7e14{% elif rate_plan.season_type == 'REGULAR' %}#28a745{% elif rate_plan.season_type == 'LOW' %}#17a2b8{% else %}#6c757d{% endif %};">
+                        <span class="season-badge season-{{ rate_plan.season_type|lower }}">
                             {{ rate_plan.get_season_type_display }}
                         </span>
                     </td>
@@ -104,8 +103,8 @@
                     <td style="padding: 15px; font-weight: bold;">₹{{ rate_plan.base_rate }}</td>
                     <td style="padding: 15px;">{{ rate_plan.time_slot }}</td>
                     <td style="padding: 15px;">
-                        <span class="status-badge"
-                            style="background: {% if rate_plan.is_active %}#28a745{% else %}#dc3545{% endif %};">
+                        <span
+                            class="status-badge status-{% if rate_plan.is_active %}active{% else %}inactive{% endif %}">
                             {% if rate_plan.is_active %}Active{% else %}Inactive{% endif %}
                         </span>
                     </td>
@@ -185,12 +184,36 @@
         font-weight: bold;
     }
 
+    .season-peak {
+        background: #dc3545;
+    }
+
+    .season-high {
+        background: #fd7e14;
+    }
+
+    .season-regular {
+        background: #28a745;
+    }
+
+    .season-low {
+        background: #17a2b8;
+    }
+
     .status-badge {
         padding: 4px 8px;
         border-radius: 4px;
         font-size: 12px;
         color: white;
         font-weight: bold;
+    }
+
+    .status-active {
+        background: #28a745;
+    }
+
+    .status-inactive {
+        background: #dc3545;
     }
 </style>
 {% endblock %}
