@@ -1,23 +1,111 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<div style="padding: 20px; max-width: 600px; margin: 0 auto;">
-    <h2 style="color: #333; margin-bottom: 30px; text-align: center;">{{ action }} Discount</h2>
-    <form method="post" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label class="form-label" style="font-weight: bold;">Description</label>
-            {{ form.description }}
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #333; margin: 0;">{{ action }} Discount</h1>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'discount_list' %}"
+                style="background: #6c757d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                ← Back to List
+            </a>
         </div>
-        <div class="mb-3">
-            <label class="form-label" style="font-weight: bold;">Discount Value</label>
-            {{ form.discount_value }}
+    </div>
+
+    <!-- Form Card -->
+    <div style="max-width: 600px; margin: 0 auto;">
+        <div style="background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center;">
+                <h2 style="margin: 0; font-size: 24px;">
+                    {% if action == 'Create' %}➕ {{ action }} Discount{% else %}✏️ {{ action }} Discount{% endif %}
+                </h2>
+            </div>
+            
+            <div style="padding: 40px;">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Form Fields -->
+                    <div style="margin-bottom: 25px;">
+                        {% for field in form %}
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; font-weight: bold; color: #333; margin-bottom: 8px; font-size: 16px;">
+                                    {{ field.label }}{% if field.field.required %} *{% endif %}
+                                </label>
+                                {% if field.field.widget.input_type == 'text' %}
+                                    <input type="text" 
+                                           name="{{ field.name }}" 
+                                           value="{{ field.value|default:'' }}"
+                                           {% if field.field.required %}required{% endif %}
+                                           style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s ease;"
+                                           onfocus="this.style.borderColor='#667eea'"
+                                           onblur="this.style.borderColor='#ddd'">
+                                {% elif field.field.widget.input_type == 'number' %}
+                                    <input type="number" 
+                                           name="{{ field.name }}" 
+                                           value="{{ field.value|default:'' }}"
+                                           {% if field.field.required %}required{% endif %}
+                                           step="0.01"
+                                           style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s ease;"
+                                           onfocus="this.style.borderColor='#667eea'"
+                                           onblur="this.style.borderColor='#ddd'">
+                                {% elif field.field.widget.input_type == 'textarea' %}
+                                    <textarea name="{{ field.name }}" 
+                                              {% if field.field.required %}required{% endif %}
+                                              style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; min-height: 100px; transition: border-color 0.3s ease;"
+                                              onfocus="this.style.borderColor='#667eea'"
+                                              onblur="this.style.borderColor='#ddd'">{{ field.value|default:'' }}</textarea>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+                                
+                                {% if field.errors %}
+                                    <div style="color: #dc3545; font-size: 14px; margin-top: 5px;">
+                                        {% for error in field.errors %}
+                                            <p style="margin: 0;">{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                
+                                {% if field.help_text %}
+                                    <small style="color: #666; font-size: 14px; display: block; margin-top: 5px;">
+                                        {{ field.help_text }}
+                                    </small>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button type="submit" 
+                            style="background: {% if action == 'Create' %}#28a745{% else %}#ffc107{% endif %}; color: {% if action == 'Create' %}white{% else %}black{% endif %}; padding: 12px 30px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; margin: 0 10px;">
+                            {% if action == 'Create' %}✅ Create Discount{% else %}💾 Update Discount{% endif %}
+                        </button>
+                        <a href="{% url 'discount_list' %}"
+                            style="background: #6c757d; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin: 0 10px;">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label" style="font-weight: bold;">Temporary Price</label>
-            {{ form.temporary_price }}
-        </div>
-        <button type="submit" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; font-weight: bold;">{{ action }}</button>
-        <a href="{% url 'discount_list' %}" class="btn btn-secondary w-100 mt-2">Cancel</a>
-    </form>
+    </div>
 </div>
+
+<style>
+    /* Form field focus effects */
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Button hover effects */
+    button:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+</style>
 {% endblock %}

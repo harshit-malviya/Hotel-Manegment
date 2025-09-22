@@ -1,14 +1,52 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<div style="padding: 20px; max-width: 500px; margin: 0 auto;">
-    <h2 style="color: #dc3545; margin-bottom: 30px; text-align: center;">Delete Discount</h2>
-    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;">
-        <p>Are you sure you want to delete <strong>{{ discount.description }}</strong> ({{ discount.discount_value }})?</p>
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger" style="font-weight: bold;">Delete</button>
-            <a href="{% url 'discount_list' %}" class="btn btn-secondary" style="font-weight: bold; margin-left: 10px;">Cancel</a>
-        </form>
+<div style="padding: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="color: #333; margin: 0;">Delete Discount</h1>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'discount_list' %}"
+                style="background: #6c757d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                ← Back to List
+            </a>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Card -->
+    <div style="max-width: 600px; margin: 0 auto;">
+        <div style="background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 20px; text-align: center;">
+                <h2 style="margin: 0; font-size: 24px;">⚠️ Confirm Deletion</h2>
+            </div>
+            
+            <div style="padding: 40px; text-align: center;">
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Are you sure you want to delete this discount?</h3>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <p style="margin: 0; font-size: 18px; font-weight: bold; color: #333;">{{ discount.description }}</p>
+                        <p style="margin: 5px 0 0 0; color: #666;">Discount Value: {{ discount.discount_value }}%</p>
+                        <p style="margin: 5px 0 0 0; color: #666;">Original Price: ₹{{ discount.temporary_price }}</p>
+                        <p style="margin: 5px 0 0 0; color: #28a745; font-weight: bold;">Final Price: ₹{{ discount.calculate_discounted_price|floatformat:2 }}</p>
+                        <p style="margin: 5px 0 0 0; color: #666;">ID: {{ discount.discount_id }}</p>
+                    </div>
+                    <p style="color: #dc3545; font-weight: bold; margin: 20px 0;">This action cannot be undone!</p>
+                </div>
+
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <div style="display: flex; justify-content: center; gap: 15px;">
+                        <button type="submit" 
+                            style="background: #dc3545; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px;">
+                            🗑️ Yes, Delete
+                        </button>
+                        <a href="{% url 'discount_list' %}"
+                            style="background: #6c757d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
