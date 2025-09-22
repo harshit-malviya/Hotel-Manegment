@@ -34,8 +34,7 @@
                                 style="display: block; font-weight: bold; color: #333; margin-bottom: 8px; font-size: 16px;">
                                 {{ field.label }}{% if field.field.required %} *{% endif %}
                             </label>
-                            {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'number'
-                            %}
+                            {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'number'%}
                             <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}"
                                 value="{{ field.value|default:'' }}" {% if field.field.required %}required{% endif %}
                                 style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s ease;"

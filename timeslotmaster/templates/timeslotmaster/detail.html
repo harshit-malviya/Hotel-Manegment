@@ -22,26 +22,31 @@
             <h2 style="margin: 0; font-size: 24px;">{{ timeslot.name }}</h2>
             <p style="margin: 5px 0 0 0; opacity: 0.9;">Timeslot ID: {{ timeslot.id }}</p>
         </div>
-        
+
         <div style="padding: 30px;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                 <div>
                     <h3 style="color: #333; margin-bottom: 15px; font-size: 18px;">Basic Information</h3>
                     <div style="margin-bottom: 15px;">
-                        <label style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Timeslot Name:</label>
+                        <label style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Timeslot
+                            Name:</label>
                         <p style="margin: 0; font-size: 16px; color: #333;">{{ timeslot.name }}</p>
                     </div>
                     <div style="margin-bottom: 15px;">
-                        <label style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Duration:</label>
-                        <p style="margin: 0; font-size: 16px; color: #333; font-weight: bold;">{{ timeslot.time }} hours</p>
+                        <label
+                            style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Duration:</label>
+                        <p style="margin: 0; font-size: 16px; color: #333; font-weight: bold;">{{ timeslot.time }} hours
+                        </p>
                     </div>
                 </div>
-                
+
                 <div>
                     <h3 style="color: #333; margin-bottom: 15px; font-size: 18px;">Status Information</h3>
                     <div style="margin-bottom: 15px;">
-                        <label style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Status:</label>
-                        <span style="background: {% if timeslot.is_active %}#28a745{% else %}#dc3545{% endif %}; color: white; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: bold;">
+                        <label
+                            style="display: block; font-weight: bold; color: #666; margin-bottom: 5px;">Status:</label>
+                        <span
+                            class="status-badge status-{% if timeslot.is_active %}active{% else %}inactive{% endif %}">
                             {% if timeslot.is_active %}Active{% else %}Inactive{% endif %}
                         </span>
                     </div>
@@ -62,4 +67,22 @@
         </a>
     </div>
 </div>
+
+<style>
+    .status-badge {
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .status-active {
+        background: #28a745;
+    }
+
+    .status-inactive {
+        background: #dc3545;
+    }
+</style>
 {% endblock %}
