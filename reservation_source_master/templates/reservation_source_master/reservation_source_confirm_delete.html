@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="padding: 20px; max-width: 600px; margin: 0 auto;">
+    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #dc3545; margin-bottom: 20px; text-align: center;">
+            🗑️ Delete Reservation Source
+        </h2>
+        
+        <div style="background: #f8d7da; color: #721c24; padding: 20px; border-radius: 8px; border: 1px solid #f5c6cb; margin-bottom: 25px;">
+            <h4 style="margin: 0 0 10px 0;">⚠️ Warning</h4>
+            <p style="margin: 0;">Are you sure you want to delete the reservation source <strong>"{{ source.name }}"</strong>?</p>
+            <p style="margin: 10px 0 0 0; font-size: 14px;">This action cannot be undone.</p>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+            <h5 style="margin: 0 0 15px 0; color: #333;">Source Details:</h5>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <strong>Source ID:</strong><br>
+                    <span style="font-family: monospace; background: #e9ecef; padding: 2px 6px; border-radius: 4px;">{{ source.source_id }}</span>
+                </div>
+                <div>
+                    <strong>Source Type:</strong><br>
+                    {{ source.get_source_type_display }}
+                </div>
+                {% if source.contact_person %}
+                <div>
+                    <strong>Contact Person:</strong><br>
+                    {{ source.contact_person }}
+                </div>
+                {% endif %}
+                {% if source.email %}
+                <div>
+                    <strong>Email:</strong><br>
+                    {{ source.email }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <form method="post" style="text-align: center;">
+            {% csrf_token %}
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button type="submit" 
+                        style="background: #dc3545; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px;">
+                    🗑️ Yes, Delete Source
+                </button>
+                <a href="{% url 'reservation-source-detail' source.id %}" 
+                   style="background: #6c757d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
+                    ❌ Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

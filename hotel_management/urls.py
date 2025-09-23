@@ -32,6 +32,7 @@ urlpatterns = [
     path('', include('dashboard.urls')),  # Default to dashboard home
     path('timeslotmaster/', include('timeslotmaster.urls')),
     path('discount_master/', include('discount_master.urls')),
+    path('reservation-sources/', include('reservation_source_master.urls')),
 ]
 
 # Serve media files during development

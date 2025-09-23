@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from . import reservation_source_views
 from . import corporate_agent_views
 
 urlpatterns = [
@@ -17,13 +16,6 @@ urlpatterns = [
     path('<int:booking_id>/check-in/', views.booking_check_in, name='booking-check-in'),
     path('<int:booking_id>/check-out/', views.booking_check_out, name='booking-check-out'),
     path('<int:booking_id>/cancel/', views.booking_cancel, name='booking-cancel'),
-    
-    # Reservation Source URLs
-    path('sources/', reservation_source_views.reservation_source_list, name='reservation-source-list'),
-    path('sources/create/', reservation_source_views.reservation_source_create, name='reservation-source-create'),
-    path('sources/<int:source_id>/', reservation_source_views.reservation_source_detail, name='reservation-source-detail'),
-    path('sources/<int:source_id>/edit/', reservation_source_views.reservation_source_update, name='reservation-source-update'),
-    path('sources/<int:source_id>/delete/', reservation_source_views.reservation_source_delete, name='reservation-source-delete'),
     
     # Corporate/Agent URLs
     path('corporate-agents/', corporate_agent_views.corporate_agent_list, name='corporate-agent-list'),

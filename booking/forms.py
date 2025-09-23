@@ -183,7 +183,7 @@ class BookingForm(forms.ModelForm):
             reservation_source_id = self.data.get('reservation_source_id')
             if reservation_source_id:
                 try:
-                    from .models import ReservationSource
+                    from reservation_source_master.models import ReservationSource
                     reservation_source = ReservationSource.objects.get(id=reservation_source_id, is_active=True)
                     cleaned_data['reservation_source'] = reservation_source
                 except ReservationSource.DoesNotExist:
@@ -309,7 +309,8 @@ class CheckOutForm(forms.Form):
         }),
         label='Final Amount (₹)'
     )
-from .models import ReservationSource, CorporateAgent
+from reservation_source_master.models import ReservationSource
+from .models import CorporateAgent
 
 class ReservationSourceForm(forms.ModelForm):
     class Meta:

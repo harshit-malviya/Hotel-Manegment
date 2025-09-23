@@ -65,7 +65,7 @@ def booking_create(request):
             reservation_source_id = request.POST.get('reservation_source_id')
             if reservation_source_id:
                 try:
-                    from .models import ReservationSource
+                    from reservation_source_master.models import ReservationSource
                     booking.reservation_source = ReservationSource.objects.get(id=reservation_source_id, is_active=True)
                 except ReservationSource.DoesNotExist:
                     pass
@@ -100,7 +100,7 @@ def booking_update(request, booking_id):
             reservation_source_id = request.POST.get('reservation_source_id')
             if reservation_source_id:
                 try:
-                    from .models import ReservationSource
+                    from reservation_source_master.models import ReservationSource
                     booking.reservation_source = ReservationSource.objects.get(id=reservation_source_id, is_active=True)
                 except ReservationSource.DoesNotExist:
                     booking.reservation_source = None
@@ -294,7 +294,7 @@ def calculate_booking_amount(request):
 
 def reservation_sources_api(request):
     """API endpoint to fetch reservation sources for search"""
-    from .models import ReservationSource
+    from reservation_source_master.models import ReservationSource
     
     sources = ReservationSource.objects.filter(is_active=True).order_by('name')
     
