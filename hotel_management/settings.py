@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'housekeeping',
     'checkin',
     'timeslotmaster',
-    'discount_master',
+    'discount_
+    'booking_master',
     'reservation_source_master',
 ]
 
