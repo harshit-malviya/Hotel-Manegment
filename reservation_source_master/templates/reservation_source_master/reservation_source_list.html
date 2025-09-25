@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <h1>{{ title }}</h1>
+        <a href="{% url 'reservation-source-create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New Source
+        </a>
+    </div>
+
+    <div class="content-body">
+        {% if sources %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Source ID</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Contact Person</th>
+                        <th>Commission Rate</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for source in sources %}
+                    <tr>
+                        <td>{{ source.source_id }}</td>
+                        <td>{{ source.name }}</td>
+                        <td>{{ source.get_source_type_display }}</td>
+                        <td>{{ source.contact_person }}</td>
+                        <td>{{ source.commission_rate }}%</td>
+                        <td>
+                            <span class="badge {% if source.is_active %}badge-success{% else %}badge-danger{% endif %}">
+                                {{ source.is_active|yesno:"Active,Inactive" }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'reservation-source-detail' source.id %}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'reservation-source-update' source.id %}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'reservation-source-delete' source.id %}" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            No reservation sources found. <a href="{% url 'reservation-source-create' %}">Create one</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

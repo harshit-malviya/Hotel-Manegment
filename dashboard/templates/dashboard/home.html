@@ -59,21 +59,17 @@
             </div>
         </div>
 
-        <!-- Revenue -->
+        <!-- Bookings Summary -->
         <div class="kpi-card">
             <div class="kpi-header">
-                <div class="kpi-icon revenue">💰</div>
+                <div class="kpi-icon revenue">📊</div>
                 <div>
-                    <div class="kpi-title">Revenue ({{ current_month }})</div>
+                    <div class="kpi-title">Bookings ({{ current_month }})</div>
                 </div>
             </div>
-            <div class="kpi-value">₹{{ this_month_revenue|floatformat:0 }}</div>
+            <div class="kpi-value">{{ this_month_bookings }}</div>
             <div class="kpi-subtitle">
-                vs Last Month: ₹{{ last_month_revenue|floatformat:0 }}
-                {% if revenue_growth > 0 %}
-                <span class="growth-indicator growth-positive">↗ {{ revenue_growth }}%</span>
-                {% elif revenue_growth < 0 %} <span class="growth-indicator growth-negative">↘ {{ revenue_growth}}%</span>
-                    {% endif %}
+                Total this month
             </div>
         </div>
 
@@ -85,16 +81,16 @@
                     <div class="kpi-title">Bookings</div>
                 </div>
             </div>
-            <div class="kpi-value">{{ active_bookings }}</div>
-            <div class="kpi-subtitle">Active Bookings</div>
+            <div class="kpi-value">{{ total_bookings }}</div>
+            <div class="kpi-subtitle">Total Bookings</div>
             <div class="quick-stats">
                 <div class="stat-item">
-                    <div class="stat-value">{{ pending_bookings }}</div>
-                    <div class="stat-label">Pending</div>
+                    <div class="stat-value">{{ todays_bookings }}</div>
+                    <div class="stat-label">Today</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">{{ total_bookings }}</div>
-                    <div class="stat-label">Total</div>
+                    <div class="stat-value">{{ this_month_bookings }}</div>
+                    <div class="stat-label">This Month</div>
                 </div>
             </div>
         </div>
@@ -109,12 +105,12 @@
             </div>
             <div class="quick-stats">
                 <div class="stat-item">
-                    <div class="stat-value">{{ todays_checkins }}</div>
-                    <div class="stat-label">Check-ins</div>
+                    <div class="stat-value">{{ todays_bookings }}</div>
+                    <div class="stat-label">New Bookings</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">{{ todays_checkouts }}</div>
-                    <div class="stat-label">Check-outs</div>
+                    <div class="stat-value">{{ new_guests_this_month }}</div>
+                    <div class="stat-label">New Guests</div>
                 </div>
             </div>
         </div>
@@ -135,8 +131,8 @@
                     <div class="stat-label">New This Month</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">₹{{ adr|floatformat:0 }}</div>
-                    <div class="stat-label">Avg Daily Rate</div>
+                    <div class="stat-value">{{ this_month_bookings }}</div>
+                    <div class="stat-label">Month Bookings</div>
                 </div>
             </div>
         </div>
@@ -151,16 +147,13 @@
                 {% for booking in recent_bookings %}
                 <div class="booking-item">
                     <div>
-                        <div class="booking-guest">{{ booking.guest.full_name }}</div>
-                        <div class="booking-room">Room {{ booking.room.room_number }} • {{ booking.duration_nights }}
-                            nights</div>
-                        {% if booking.reservation_source %}
-                        <div style="font-size: 11px; color: #007bff;">via {{ booking.reservation_source.name }}</div>
-                        {% endif %}
+                        <div class="booking-guest">{{ booking.customer_first_name }} {{ booking.customer_last_name }}</div>
+                        <div class="booking-room">{{ booking.room_type.name }} • {{ booking.phone_number }}</div>
+                        <div style="font-size: 11px; color: #007bff;">{{ booking.email }}</div>
                     </div>
                     <div>
-                        <div class="booking-date">{{ booking.check_in_date|date:"M d" }} - {{booking.check_out_date|date:"M d" }}</div>
-                        <span class="status-badge status-{{ booking.status|lower|cut:' '|cut:'_' }}">{{booking.get_status_display }}</span>
+                        <div class="booking-date">{{ booking.booking_date|date:"M d, Y" }}</div>
+                        <div class="booking-time">{{ booking.booking_time|time:"H:i" }}</div>
                     </div>
                 </div>
                 {% empty %}
@@ -169,20 +162,23 @@
             </div>
         </div>
 
-        <!-- Upcoming Check-ins -->
+        <!-- Room Type Statistics -->
         <div class="info-section">
-            <h3 class="section-title">📅 Upcoming Check-ins</h3>
+            <h3 class="section-title">🏨 Room Type Status</h3>
             <div class="booking-list">
-                {% for booking in upcoming_checkins %}
+                {% for room_stat in room_type_stats %}
                 <div class="booking-item">
                     <div>
-                        <div class="booking-guest">{{ booking.guest.full_name }}</div>
-                        <div class="booking-room">Room {{ booking.room.room_number }}</div>
+                        <div class="booking-guest">{{ room_stat.room_type__name }}</div>
+                        <div class="booking-room">{{ room_stat.total }} total rooms</div>
                     </div>
-                    <div class="booking-date">{{ booking.check_in_date|date:"M d, Y" }}</div>
+                    <div>
+                        <div class="booking-date">{{ room_stat.available }} available</div>
+                        <div class="booking-time">{{ room_stat.occupied }} occupied</div>
+                    </div>
                 </div>
                 {% empty %}
-                <p style="text-align: center; color: #666; padding: 20px;">No upcoming check-ins</p>
+                <p style="text-align: center; color: #666; padding: 20px;">No room data available</p>
                 {% endfor %}
             </div>
         </div>

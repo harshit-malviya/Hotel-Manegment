@@ -11,7 +11,7 @@ from .enhanced_models import (
     CheckInWorkflow, DigitalKeyCard, NotificationTemplate, 
     NotificationLog, MobileCheckInSession
 )
-from booking.models import Booking
+from booking_master.models import Booking
 from guest.models import Guest
 
 

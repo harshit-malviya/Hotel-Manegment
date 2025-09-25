@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import date, timedelta, datetime
 from .enhanced_models import CheckIn
-from booking.models import Booking
+from booking_master.models import Booking
 from guest.models import Guest
 from rooms.models import Room
 

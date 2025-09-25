@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <h1>{{ title }}</h1>
+        <a href="{% url 'reservation-source-list' %}" class="btn btn-secondary">
+            ← Back to Sources
+        </a>
+    </div>
+
+    <div class="content-body">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" class="form">
+                    {% csrf_token %}
+                    
+                    <div class="section">
+                        <h3 class="section-title">📋 Basic Information</h3>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.source_id.label_tag }}
+                                {{ form.source_id }}
+                                {% if form.source_id.errors %}
+                                <div class="form-error">{{ form.source_id.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{ form.name.label_tag }}
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                <div class="form-error">{{ form.name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.source_type.label_tag }}
+                                {{ form.source_type }}
+                                {% if form.source_type.errors %}
+                                <div class="form-error">{{ form.source_type.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title">📞 Contact Information</h3>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.contact_person.label_tag }}
+                                {{ form.contact_person }}
+                                {% if form.contact_person.errors %}
+                                <div class="form-error">{{ form.contact_person.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{ form.email.label_tag }}
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                <div class="form-error">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.phone.label_tag }}
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                <div class="form-error">{{ form.phone.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{ form.website_url.label_tag }}
+                                {{ form.website_url }}
+                                {% if form.website_url.errors %}
+                                <div class="form-error">{{ form.website_url.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ form.address.label_tag }}
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                            <div class="form-error">{{ form.address.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title">💰 Financial Information</h3>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.commission_rate.label_tag }}
+                                {{ form.commission_rate }}
+                                {% if form.commission_rate.errors %}
+                                <div class="form-error">{{ form.commission_rate.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="form-check">
+                                    {{ form.is_active }}
+                                    {{ form.is_active.label_tag }}
+                                </div>
+                                {% if form.is_active.errors %}
+                                <div class="form-error">{{ form.is_active.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title">📝 Additional Information</h3>
+                        <div class="form-group">
+                            {{ form.notes.label_tag }}
+                            {{ form.notes }}
+                            {% if form.notes.errors %}
+                            <div class="form-error">{{ form.notes.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">{{ submit_text|default:"Save" }}</button>
+                        <a href="{% url 'reservation-source-list' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
