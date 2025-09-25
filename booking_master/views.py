@@ -1,5 +1,9 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from .forms import BookingForm
+from rate.models import RatePlan
+from timeslotmaster.models import TimeslotMaster
+from rooms.models import RoomType
 
 def create_booking(request):
     if request.method == 'POST':
@@ -10,6 +14,31 @@ def create_booking(request):
     else:
         form = BookingForm()
     return render(request, 'booking_master/booking_form.html', {'form': form})
+
+
+# AJAX endpoint to get time slots for a room type
+def get_time_slots(request):
+    room_type_id = request.GET.get('room_type_id')
+    time_slots = []
+    if room_type_id:
+        # Get unique time_slot ids for this room_type from RatePlan
+        slot_ids = list(RatePlan.objects.filter(room_type_id=room_type_id, is_active=True)
+                        .values_list('time_slot', flat=True).distinct())
+        # Remove duplicates by using set
+        unique_slots = TimeslotMaster.objects.filter(id__in=set(slot_ids)).order_by('name')
+        time_slots = [{'id': slot.id, 'name': slot.name, 'time': slot.time} for slot in unique_slots]
+    return JsonResponse({'time_slots': time_slots})
+
+# AJAX endpoint to get price for room type and time slot
+def get_price(request):
+    room_type_id = request.GET.get('room_type_id')
+    time_slot_id = request.GET.get('time_slot_id')
+    price = None
+    if room_type_id and time_slot_id:
+        rate = RatePlan.objects.filter(room_type_id=room_type_id, time_slot_id=time_slot_id, is_active=True).order_by('base_rate').first()
+        if rate:
+            price = str(rate.base_rate)
+    return JsonResponse({'price': price})
 
 def booking_success(request):
     return render(request, 'booking_master/booking_success.html')

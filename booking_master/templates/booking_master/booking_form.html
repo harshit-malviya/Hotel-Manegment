@@ -91,6 +91,19 @@
             {% endif %}
           </div>
           <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Time Slot</label>
+            <select id="id_time_slot" name="time_slot" class="form-control">
+              <option value="">---------</option>
+            </select>
+            <div id="time_slot_error" style="color: #dc3545; font-size: 14px; margin-top: 5px;"></div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+          <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Room Price</label>
+            <input type="text" id="room_price" class="form-control" readonly value="" placeholder="Select Room Type & Time Slot">
+          </div>
+          <div>
             <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">{{ form.payment_method.label }}</label>
             {{ form.payment_method }}
             {% if form.payment_method.errors %}
@@ -118,6 +131,53 @@
   </div>
 </div>
 
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var roomType = document.getElementById('id_room_type');
+  var timeSlotSelect = document.getElementById('id_time_slot');
+  var priceInput = document.getElementById('room_price');
+
+  function updateTimeSlotsAndPrice() {
+    var roomTypeId = roomType.value;
+    // Clear previous
+    timeSlotSelect.innerHTML = '<option value="">---------</option>';
+    priceInput.value = '';
+    if (roomTypeId) {
+      fetch('/booking_master/ajax/get_time_slots/?room_type_id=' + roomTypeId)
+        .then(response => response.json())
+        .then(data => {
+          // Use a Set to track unique slot ids
+          var seen = new Set();
+          data.time_slots.forEach(function(slot) {
+            if (!seen.has(slot.id)) {
+              var opt = document.createElement('option');
+              opt.value = slot.id;
+              opt.text = slot.name + ' (' + slot.time + ' hrs)';
+              timeSlotSelect.appendChild(opt);
+              seen.add(slot.id);
+            }
+          });
+        });
+    }
+  }
+
+  roomType.addEventListener('change', updateTimeSlotsAndPrice);
+  timeSlotSelect.addEventListener('change', function() {
+    var roomTypeId = roomType.value;
+    var timeSlotId = timeSlotSelect.value;
+    if (roomTypeId && timeSlotId) {
+      fetch('/booking_master/ajax/get_price/?room_type_id=' + roomTypeId + '&time_slot_id=' + timeSlotId)
+        .then(response => response.json())
+        .then(data => {
+          priceInput.value = data.price ? data.price : 'N/A';
+        });
+    } else {
+      priceInput.value = '';
+    }
+  });
+});
+</script>
 <style>
   .form-control {
     width: 100%;
