@@ -8,7 +8,7 @@ from .forms import ServiceForm, ServiceSearchForm, ServiceChargeForm
 from guest.models import Guest
 from rooms.models import Room
 from checkin.enhanced_models import CheckIn
-from booking.models import Booking
+from booking_master.models import Booking
 from decimal import Decimal
 
 

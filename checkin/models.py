@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from django.utils import timezone
-from booking.models import Booking
+# from booking_master.models import Booking  # Updated to use booking_master
 from guest.models import Guest
 from rooms.models import Room
 

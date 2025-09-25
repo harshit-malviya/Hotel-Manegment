@@ -1,6 +1,6 @@
 from django import forms
 from .models import Service, ServiceCharge
-from booking.models import Booking
+from booking_master.models import Booking
 from guest.models import Guest
 from rooms.models import Room
 

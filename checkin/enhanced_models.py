@@ -10,7 +10,7 @@ import uuid
 import secrets
 import string
 
-from booking.models import Booking
+from booking_master.models import Booking
 from guest.models import Guest
 from rooms.models import Room
 
@@ -315,7 +315,7 @@ class NotificationLog(models.Model):
     ]
     
     booking = models.ForeignKey(
-        'booking.Booking',
+        'booking_master.Booking',
         on_delete=models.CASCADE,
         related_name='notifications',
         null=True,
@@ -535,7 +535,7 @@ class MobileCheckInSession(models.Model):
         help_text="Unique session identifier"
     )
     booking = models.ForeignKey(
-        'booking.Booking',
+        'booking_master.Booking',
         on_delete=models.CASCADE,
         related_name='mobile_sessions',
         null=True,

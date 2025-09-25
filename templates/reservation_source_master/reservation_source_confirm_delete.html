@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reservation_sources.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1 class="page-title">🗑️ {{ title }}</h1>
+        <a href="{% url 'reservation-source-detail' source.id %}" class="btn btn-secondary">
+            ← Back to Details
+        </a>
+    </div>
+
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <div class="card-body">
+            <div class="alert alert-warning" style="margin-bottom: 30px;">
+                <h3 style="margin: 0 0 10px 0;">⚠️ Warning!</h3>
+                <p style="margin: 0;">
+                    Are you sure you want to delete the reservation source <strong>"{{ source.name }}"</strong>?
+                    <br><strong>This action cannot be undone.</strong>
+                </p>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; border-left: 4px solid #dc3545;">
+                <h4 style="color: #dc3545; margin-bottom: 15px;">Source Details</h4>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 8px 0; font-weight: bold; color: #666; width: 35%;">Source ID:</td>
+                        <td style="padding: 8px 0;">{{ source.source_id|default:"-" }}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 8px 0; font-weight: bold; color: #666;">Name:</td>
+                        <td style="padding: 8px 0;"><strong>{{ source.name }}</strong></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 8px 0; font-weight: bold; color: #666;">Type:</td>
+                        <td style="padding: 8px 0;">{{ source.get_source_type_display }}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 8px 0; font-weight: bold; color: #666;">Contact Person:</td>
+                        <td style="padding: 8px 0;">{{ source.contact_person|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #666;">Status:</td>
+                        <td style="padding: 8px 0;">
+                            {% if source.is_active %}
+                                <span class="status-active">✅ Active</span>
+                            {% else %}
+                                <span class="status-inactive">❌ Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card-header" style="border-top: 1px solid #dee2e6; border-bottom: none;">
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        🗑️ Yes, Delete Permanently
+                    </button>
+                </form>
+                <a href="{% url 'reservation-source-detail' source.id %}" class="btn btn-secondary">
+                    ❌ Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

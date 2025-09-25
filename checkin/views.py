@@ -8,8 +8,8 @@ from django.http import JsonResponse
 from datetime import date, timedelta
 from .enhanced_models import CheckIn
 from .forms import CheckInForm, CheckInSearchForm, QuickCheckInForm, EnhancedCheckInForm
-from booking.models import Booking
-from booking.forms import BookingForm
+from booking_master.models import Booking
+from booking_master.forms import BookingForm
 from guest.models import Guest
 from rooms.models import Room
 

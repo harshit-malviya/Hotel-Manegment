@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from booking_master.models import GuestPreference
 
 class Guest(models.Model):
     GENDER_CHOICES = [
@@ -139,7 +140,7 @@ class Guest(models.Model):
     
     def update_loyalty_stats(self):
         """Update loyalty statistics based on booking history"""
-        from booking.models import Booking
+        from booking_master.models import Booking
         from decimal import Decimal
         
         completed_bookings = Booking.objects.filter(
@@ -184,7 +185,7 @@ class Guest(models.Model):
     
     def create_default_preferences(self):
         """Create default guest preferences if they don't exist"""
-        from booking.enhanced_models import GuestPreference
+        # from booking_master.enhanced_models import GuestPreference  # Update when available
         
         if not hasattr(self, 'preferences'):
             GuestPreference.objects.create(guest=self)

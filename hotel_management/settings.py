@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'rooms',
     'amenities',
     'guest',
-    'booking',
     'rate',
     'dashboard',
     'service',
@@ -48,6 +47,7 @@ INSTALLED_APPS = [
     'checkin',
     'timeslotmaster',
     'discount_master',
+    'reservation_source_master',
     'booking_master',
 ]
 

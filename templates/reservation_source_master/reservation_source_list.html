@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reservation_sources.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="list-header">
+        <h1 class="list-title">Reservation Source Master</h1>
+        <a href="{% url 'reservation-source-create' %}" class="btn btn-primary">
+            New Reservation Source
+        </a>
+    </div>
+
+    <div class="list-summary">
+        Total {{ sources|length }} reservation source{{ sources|length|pluralize }}
+    </div>
+
+    <div class="list-table-container">
+        <table class="list-table">
+            <thead>
+                <tr>
+                    <th>Source ID</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Contact Person</th>
+                    <th>Commission Rate</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if sources %}
+                    {% for source in sources %}
+                    <tr>
+                        <td>{{ source.source_id|default:"-" }}</td>
+                        <td><strong>{{ source.name }}</strong></td>
+                        <td>{{ source.get_source_type_display }}</td>
+                        <td>{{ source.contact_person|default:"-" }}</td>
+                        <td>{{ source.commission_rate }}%</td>
+                        <td>
+                            {% if source.is_active %}
+                                <span class="status-active">Active</span>
+                            {% else %}
+                                <span class="status-inactive">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'reservation-source-detail' source.id %}" 
+                                   class="btn btn-sm btn-info">View</a>
+                                <a href="{% url 'reservation-source-update' source.id %}" 
+                                   class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{% url 'reservation-source-delete' source.id %}" 
+                                   class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="empty-state-cell">
+                            No reservation sources created yet. <a href="{% url 'reservation-source-create' %}">Create the first reservation source</a>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

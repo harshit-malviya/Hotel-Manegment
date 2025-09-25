@@ -24,7 +24,6 @@ urlpatterns = [
     path('rooms/', include('rooms.urls')),
     path('amenities/', include('amenities.urls')),
     path('guests/', include('guest.urls')),
-    path('bookings/', include('booking.urls')),
     path('rates/', include('rate.urls')),
     path('services/', include('service.urls')),
     path('housekeeping/', include('housekeeping.urls')),
@@ -33,6 +32,7 @@ urlpatterns = [
     path('timeslotmaster/', include('timeslotmaster.urls')),
     path('discount_master/', include('discount_master.urls')),
     path('booking_master/', include('booking_master.urls')),
+    path('reservation-sources/', include('reservation_source_master.urls')),
 ]
 
 # Serve media files during development

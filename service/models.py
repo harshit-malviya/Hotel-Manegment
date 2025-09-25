@@ -147,7 +147,7 @@ class ServiceCharge(models.Model):
 
     # Optional link to a room booking (when guest is in-house)
     booking = models.ForeignKey(
-        'booking.Booking',
+        'booking_master.Booking',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
