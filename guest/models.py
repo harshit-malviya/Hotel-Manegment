@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from booking_master.models import GuestPreference
+# from booking_master.models import GuestPreference
 
 class Guest(models.Model):
     GENDER_CHOICES = [
@@ -183,12 +183,12 @@ class Guest(models.Model):
         except:
             return 50  # Default neutral score
     
-    def create_default_preferences(self):
-        """Create default guest preferences if they don't exist"""
-        # from booking_master.enhanced_models import GuestPreference  # Update when available
+    # def create_default_preferences(self):
+    #     """Create default guest preferences if they don't exist"""
+    #     # from booking_master.enhanced_models import GuestPreference  # Update when available
         
-        if not hasattr(self, 'preferences'):
-            GuestPreference.objects.create(guest=self)
+    #     if not hasattr(self, 'preferences'):
+    #         GuestPreference.objects.create(guest=self)
     
     @property
     def can_book(self):
