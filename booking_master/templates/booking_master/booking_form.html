@@ -104,6 +104,13 @@
             <input type="text" id="room_price" class="form-control" readonly value="" placeholder="Select Room Type & Time Slot">
           </div>
           <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">{{ form.reservation_source.label }}</label>
+            {{ form.reservation_source }}
+            {% if form.reservation_source.errors %}
+              <div style="color: #dc3545; font-size: 14px; margin-top: 5px;">{{ form.reservation_source.errors }}</div>
+            {% endif %}
+          </div>
+          <div>
             <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">{{ form.payment_method.label }}</label>
             {{ form.payment_method }}
             {% if form.payment_method.errors %}

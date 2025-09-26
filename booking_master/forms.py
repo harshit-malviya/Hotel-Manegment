@@ -51,6 +51,9 @@ class BookingForm(forms.ModelForm):
             'payment_method': forms.Select(attrs={
                 'class': 'form-control'
             }),
+            'reservation_source': forms.Select(attrs={
+                'class': 'form-control'
+            }),
         }
 
     def __init__(self, *args, **kwargs):

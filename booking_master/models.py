@@ -1,5 +1,6 @@
 from django.db import models
 from rooms.models import RoomType
+from reservation_source_master.models import ReservationSource
 
 class Booking(models.Model):
     ID_PROOF_CHOICES = [
@@ -27,6 +28,7 @@ class Booking(models.Model):
     booking_time = models.TimeField(auto_now_add=True)
     room_type = models.ForeignKey(RoomType, on_delete=models.PROTECT)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES)
+    reservation_source = models.ForeignKey(ReservationSource, on_delete=models.PROTECT)
 
     def __str__(self):
         return f"Booking {self.booking_id} - {self.customer_first_name} {self.customer_last_name}"
