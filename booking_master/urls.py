@@ -6,4 +6,5 @@ urlpatterns = [
     path('success/', views.booking_success, name='booking_success'),
     path('ajax/get_time_slots/', views.get_time_slots, name='get_time_slots'),
     path('ajax/get_price/', views.get_price, name='get_price'),
+    path('ajax/get_commission_rate/', views.get_commission_rate, name='get_commission_rate'),
 ]

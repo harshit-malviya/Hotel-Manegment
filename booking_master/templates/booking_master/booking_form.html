@@ -102,6 +102,8 @@
           <div>
             <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Room Price</label>
             <input type="text" id="room_price" class="form-control" readonly value="" placeholder="Select Room Type & Time Slot">
+            <!-- Price Breakup Div -->
+            <div id="price_breakup" style="margin-top: 10px; background: #f4f6fb; border-radius: 6px; padding: 12px; color: #333; display: none;"></div>
           </div>
           <div>
             <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">{{ form.reservation_source.label }}</label>
@@ -138,18 +140,21 @@
   </div>
 </div>
 
-</script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   var roomType = document.getElementById('id_room_type');
   var timeSlotSelect = document.getElementById('id_time_slot');
   var priceInput = document.getElementById('room_price');
+  var reservationSource = document.getElementById('id_reservation_source');
+  var priceBreakupDiv = document.getElementById('price_breakup');
 
   function updateTimeSlotsAndPrice() {
     var roomTypeId = roomType.value;
     // Clear previous
     timeSlotSelect.innerHTML = '<option value="">---------</option>';
     priceInput.value = '';
+    priceBreakupDiv.style.display = 'none';
+    priceBreakupDiv.innerHTML = '';
     if (roomTypeId) {
       fetch('/booking_master/ajax/get_time_slots/?room_type_id=' + roomTypeId)
         .then(response => response.json())
@@ -169,19 +174,53 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  function updateDiscountedPrice() {
+    var roomTypeId = roomType.value;
+    var timeSlotId = timeSlotSelect.value;
+    var reservationSourceId = reservationSource.value;
+    var basePrice = priceInput.value && !isNaN(priceInput.value) ? parseFloat(priceInput.value) : null;
+    if (roomTypeId && timeSlotId && reservationSourceId && basePrice) {
+      fetch('/booking_master/ajax/get_commission_rate/?reservation_source_id=' + reservationSourceId)
+        .then(response => response.json())
+        .then(data => {
+          var commissionRate = data.commission_rate ? parseFloat(data.commission_rate) : 0;
+          var discount = (basePrice * commissionRate) / 100;
+          var finalPrice = basePrice - discount;
+          priceBreakupDiv.style.display = 'block';
+          priceBreakupDiv.innerHTML =
+            '<b>Price Breakup:</b><br>' +
+            'Base Price: ₹' + basePrice.toFixed(2) + '<br>' +
+            'Discount (' + commissionRate.toFixed(2) + '%): -₹' + discount.toFixed(2) + '<br>' +
+            '<b>Final Price: ₹' + finalPrice.toFixed(2) + '</b>';
+        });
+    } else {
+      priceBreakupDiv.style.display = 'none';
+      priceBreakupDiv.innerHTML = '';
+    }
+  }
+
   roomType.addEventListener('change', updateTimeSlotsAndPrice);
   timeSlotSelect.addEventListener('change', function() {
     var roomTypeId = roomType.value;
     var timeSlotId = timeSlotSelect.value;
+    priceBreakupDiv.style.display = 'none';
+    priceBreakupDiv.innerHTML = '';
     if (roomTypeId && timeSlotId) {
       fetch('/booking_master/ajax/get_price/?room_type_id=' + roomTypeId + '&time_slot_id=' + timeSlotId)
         .then(response => response.json())
         .then(data => {
           priceInput.value = data.price ? data.price : 'N/A';
+          updateDiscountedPrice();
         });
     } else {
       priceInput.value = '';
+      priceBreakupDiv.style.display = 'none';
+      priceBreakupDiv.innerHTML = '';
     }
+  });
+
+  reservationSource.addEventListener('change', function() {
+    updateDiscountedPrice();
   });
 });
 </script>

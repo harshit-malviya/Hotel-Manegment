@@ -52,7 +52,8 @@ class BookingForm(forms.ModelForm):
                 'class': 'form-control'
             }),
             'reservation_source': forms.Select(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
+                'id': 'id_reservation_source'
             }),
         }
 
